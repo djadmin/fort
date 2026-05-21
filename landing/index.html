@@ -161,11 +161,15 @@ h1 em{
 .c-bold-green{color:var(--green);font-weight:700}
 
 /* ─── INSTALL ─────────────────────────────────── */
-.install-row{
-  display:flex;align-items:center;gap:.75rem;
-  flex-wrap:wrap;justify-content:center;
-  margin-bottom:2.25rem;
+.install-wrap{margin-bottom:2.25rem;display:flex;flex-direction:column;align-items:center;gap:.625rem}
+.install-tabs{display:flex;gap:.25rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.25rem}
+.itab{
+  padding:.35rem .875rem;border-radius:5px;
+  font-size:.8125rem;font-weight:500;color:var(--muted);
+  cursor:pointer;border:none;background:none;transition:color .15s,background .15s;
 }
+.itab.active{background:var(--card);color:var(--white)}
+.itab:hover:not(.active){color:var(--dimmed)}
 .install-cmd{
   display:flex;align-items:center;gap:.75rem;
   background:var(--surface);
@@ -174,14 +178,16 @@ h1 em{
   padding:.6rem 1rem .6rem 1.25rem;
   font-family:ui-monospace,"Cascadia Code","SF Mono",Menlo,monospace;
   font-size:.875rem;color:var(--dimmed);
+  width:100%;max-width:520px;
 }
+.install-cmd span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.install-note{font-size:.75rem;color:var(--muted)}
 .copy-btn{
   display:flex;align-items:center;justify-content:center;
-  width:30px;height:30px;
+  width:30px;height:30px;flex-shrink:0;
   background:var(--card);border:1px solid var(--border);
   border-radius:5px;cursor:pointer;
   color:var(--muted);transition:color .15s,border-color .15s;
-  flex-shrink:0;
 }
 .copy-btn:hover{color:var(--white);border-color:var(--muted)}
 .copy-btn svg{width:14px;height:14px}
@@ -459,16 +465,25 @@ footer{
     </div>
   </div>
 
-  <div class="install-row">
-    <div class="install-cmd">
-      <span>go install github.com/djadmin/fort/cmd/fort@latest</span>
-      <button class="copy-btn" onclick="copyInstall(this)" title="Copy">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="5" y="5" width="8" height="8" rx="1.5"/>
-          <path d="M3 11V3h8" stroke-linecap="round"/>
-        </svg>
+  <div class="install-wrap">
+    <div class="install-tabs">
+      <button class="itab active" onclick="switchTab('brew',this)">Homebrew</button>
+      <button class="itab" onclick="switchTab('go',this)">Go</button>
+    </div>
+    <div class="install-cmd" id="install-brew">
+      <span>brew install djadmin/tap/fort</span>
+      <button class="copy-btn" onclick="copyCmd(this,'brew install djadmin/tap/fort')" title="Copy">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
       </button>
     </div>
+    <div class="install-cmd" id="install-go" style="display:none">
+      <span>go install github.com/djadmin/fort/cmd/fort@latest</span>
+      <button class="copy-btn" onclick="copyCmd(this,'go install github.com/djadmin/fort/cmd/fort@latest')" title="Copy">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <span class="install-note" id="install-note-brew">Requires <a href="https://brew.sh" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Homebrew</a></span>
+    <span class="install-note" id="install-note-go" style="display:none">Requires <a href="https://go.dev" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Go 1.21+</a></span>
   </div>
 
   <div class="cta-row">
@@ -780,9 +795,19 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.3 });
 observer.observe(document.querySelector('.hero'));
 
-// ── Copy install command ─────────────────────────────────────
-function copyInstall(btn) {
-  navigator.clipboard.writeText('go install github.com/djadmin/fort/cmd/fort@latest').then(() => {
+// ── Install tabs ─────────────────────────────────────────────
+function switchTab(id, btn) {
+  ['brew','go'].forEach(t => {
+    document.getElementById('install-'+t).style.display = t===id ? 'flex' : 'none';
+    document.getElementById('install-note-'+t).style.display = t===id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.itab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Copy command ─────────────────────────────────────────────
+function copyCmd(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
     btn.classList.add('copied');
     btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,8 6,12 14,4"/></svg>';
     setTimeout(() => {
@@ -793,20 +818,26 @@ function copyInstall(btn) {
 }
 
 // ── Waitlist form ────────────────────────────────────────────
-function submitWaitlist(e) {
+async function submitWaitlist(e) {
   e.preventDefault();
   const email = document.getElementById('wl-email').value;
+  const btn = e.target.querySelector('.wl-submit');
+  btn.textContent = 'Joining…';
+  btn.disabled = true;
 
-  // TODO: replace with your actual endpoint (Formspree, Loops, etc.)
-  // fetch('https://formspree.io/f/YOUR_ID', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email })
-  // });
-
-  console.log('Waitlist signup:', email); // wire up your backend here
-  document.getElementById('wl-form').style.display = 'none';
-  document.getElementById('wl-success').style.display = 'block';
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    if (!res.ok) throw new Error('failed');
+    document.getElementById('wl-form').style.display = 'none';
+    document.getElementById('wl-success').style.display = 'block';
+  } catch {
+    btn.textContent = 'Try again';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>

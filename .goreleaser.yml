@@ -1,0 +1,55 @@
+version: 2
+project_name: fort
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: fort
+    main: ./cmd/fort
+    binary: fort
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+universal_binaries:
+  - replace: true
+
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+brews:
+  - name: fort
+    repository:
+      owner: djadmin
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/djadmin/fort
+    description: One command. Every Mac. SOC 2 ready.
+    license: MIT
+    install: bin.install "fort"
+    test: system "#{bin}/fort", "--version"
+
+release:
+  github:
+    owner: djadmin
+    name: fort
+  name_template: "v{{ .Version }}"
+  draft: false
+  prerelease: auto
