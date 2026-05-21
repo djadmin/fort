@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fort — One command. Every Mac. SOC 2 ready.</title>
+<meta name="description" content="fort audits your Mac's security settings, fixes what it finds, and generates a compliance report. No MDM. No signup. No agent.">
+<meta property="og:title" content="fort — One command. Every Mac. SOC 2 ready.">
+<meta property="og:description" content="Audit, remediate, and prove endpoint security in seconds.">
+<meta property="og:type" content="website">
+<style>
+:root {
+  --bg:       #05080f;
+  --surface:  #0d1117;
+  --card:     #0d1424;
+  --border:   #1e2736;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --dimmed:   #94a3b8;
+  --green:    #22c55e;
+  --red:      #ef4444;
+  --yellow:   #eab308;
+  --blue:     #3b82f6;
+  --white:    #f8fafc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+/* ─── NAV ─────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:56px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  background:rgba(5,8,15,.85);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.nav-logo{
+  font-size:1.125rem;font-weight:700;letter-spacing:-.02em;
+  color:var(--white);
+}
+.nav-logo span{
+  display:inline-block;
+  background:linear-gradient(135deg,#22c55e,#3b82f6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.nav-links{display:flex;align-items:center;gap:1.5rem}
+.nav-links a{
+  font-size:.875rem;color:var(--muted);
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--white)}
+.nav-gh{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.4rem .875rem;
+  border:1px solid var(--border);border-radius:6px;
+  font-size:.8125rem;font-weight:500;color:var(--dimmed);
+  transition:border-color .2s,color .2s;
+}
+.nav-gh:hover{border-color:var(--muted);color:var(--white)}
+.nav-gh svg{width:16px;height:16px;fill:currentColor}
+
+/* ─── HERO ────────────────────────────────────── */
+.hero{
+  min-height:100svh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:5rem 1.5rem 3rem;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:900px;height:700px;
+  background:radial-gradient(ellipse at center,rgba(34,197,94,.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.3rem .875rem;
+  border:1px solid rgba(34,197,94,.25);
+  border-radius:999px;
+  font-size:.75rem;font-weight:500;color:var(--green);
+  margin-bottom:1.75rem;
+  letter-spacing:.02em;
+}
+.badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{
+  font-size:clamp(2.25rem,5.5vw,4rem);
+  font-weight:800;
+  letter-spacing:-.04em;
+  line-height:1.1;
+  color:var(--white);
+  max-width:18ch;
+  margin:0 auto .75rem;
+}
+h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#22c55e 0%,#3b82f6 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{
+  font-size:1.0625rem;color:var(--dimmed);
+  max-width:44ch;margin:0 auto 2.5rem;
+  line-height:1.65;
+}
+
+/* ─── TERMINAL ────────────────────────────────── */
+.terminal-wrap{
+  width:100%;max-width:640px;
+  margin:0 auto 2.5rem;
+  text-align:left;
+}
+.terminal{
+  background:#0a0f1c;
+  border-radius:12px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04);
+}
+.t-bar{
+  background:#111827;
+  padding:11px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
+.t-title{flex:1;text-align:center;font-size:.75rem;color:#4b5563;font-family:ui-monospace,monospace}
+.t-body{
+  padding:1.25rem 1.5rem;
+  font-family:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  font-size:12.5px;line-height:1.7;
+  min-height:280px;
+}
+.tl{opacity:0;transform:translateY(4px);transition:opacity .25s ease,transform .25s ease}
+.tl.show{opacity:1;transform:none}
+.c-green{color:var(--green)}
+.c-red{color:var(--red)}
+.c-yellow{color:var(--yellow)}
+.c-muted{color:#4b5563}
+.c-dim{color:#374151}
+.c-white{color:var(--white)}
+.c-bold-red{color:var(--red);font-weight:700}
+.c-bold-green{color:var(--green);font-weight:700}
+
+/* ─── INSTALL ─────────────────────────────────── */
+.install-row{
+  display:flex;align-items:center;gap:.75rem;
+  flex-wrap:wrap;justify-content:center;
+  margin-bottom:2.25rem;
+}
+.install-cmd{
+  display:flex;align-items:center;gap:.75rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:.6rem 1rem .6rem 1.25rem;
+  font-family:ui-monospace,"Cascadia Code","SF Mono",Menlo,monospace;
+  font-size:.875rem;color:var(--dimmed);
+}
+.copy-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:5px;cursor:pointer;
+  color:var(--muted);transition:color .15s,border-color .15s;
+  flex-shrink:0;
+}
+.copy-btn:hover{color:var(--white);border-color:var(--muted)}
+.copy-btn svg{width:14px;height:14px}
+.copy-btn.copied{color:var(--green);border-color:var(--green)}
+
+/* ─── CTA BUTTONS ─────────────────────────────── */
+.cta-row{
+  display:flex;align-items:center;gap:.75rem;
+  justify-content:center;flex-wrap:wrap;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.65rem 1.375rem;border-radius:8px;
+  font-size:.9375rem;font-weight:600;
+  transition:opacity .15s,transform .1s;cursor:pointer;border:none;
+}
+.btn:hover{opacity:.88;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:var(--white);color:#0a0f1c}
+.btn-ghost{
+  background:transparent;color:var(--dimmed);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{color:var(--white);border-color:var(--muted)}
+
+/* ─── SECTION COMMON ──────────────────────────── */
+section{padding:5rem 1.5rem}
+.container{max-width:1040px;margin:0 auto}
+.section-label{
+  font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--green);font-weight:600;margin-bottom:.75rem;
+}
+.section-title{
+  font-size:clamp(1.75rem,3.5vw,2.375rem);
+  font-weight:800;letter-spacing:-.035em;
+  color:var(--white);line-height:1.15;
+  margin-bottom:.875rem;
+}
+.section-sub{
+  font-size:1rem;color:var(--muted);
+  max-width:48ch;line-height:1.65;
+}
+
+/* ─── HOW IT WORKS ────────────────────────────── */
+.how{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2rem;margin-top:3rem;
+}
+@media(max-width:700px){.steps{grid-template-columns:1fr}}
+.step{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:1.75rem;
+}
+.step-num{
+  font-size:.6875rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:1rem;
+}
+.step-cmd{
+  font-family:ui-monospace,"Cascadia Code","SF Mono",Menlo,monospace;
+  font-size:.9375rem;color:var(--green);
+  margin-bottom:.875rem;font-weight:600;
+}
+.step h3{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.375rem}
+.step p{font-size:.875rem;color:var(--muted);line-height:1.6}
+
+/* ─── CHECKS ──────────────────────────────────── */
+.checks-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  margin-top:3rem;
+}
+@media(max-width:600px){.checks-grid{grid-template-columns:1fr}}
+.check-item{
+  background:var(--card);
+  padding:1.375rem 1.5rem;
+  display:flex;align-items:flex-start;gap:1rem;
+}
+.check-icon{
+  font-size:1.125rem;flex-shrink:0;margin-top:.1rem;
+  width:1.5rem;text-align:center;
+}
+.check-info{}
+.check-name{
+  font-size:.9375rem;font-weight:600;color:var(--white);
+  margin-bottom:.125rem;
+  display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
+}
+.check-desc{font-size:.8125rem;color:var(--muted);line-height:1.5}
+.tag{
+  display:inline-block;padding:.125rem .4rem;
+  border-radius:3px;font-size:.6rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.tag-fix{background:rgba(59,130,246,.15);color:#60a5fa}
+.tag-soc{background:rgba(34,197,94,.1);color:#4ade80}
+
+/* ─── REPORT PREVIEW ──────────────────────────── */
+.report-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.report-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;
+  margin-top:3rem;
+}
+@media(max-width:760px){.report-inner{grid-template-columns:1fr}}
+.report-points{display:flex;flex-direction:column;gap:1.25rem}
+.report-point{display:flex;align-items:flex-start;gap:.875rem}
+.report-point-icon{
+  width:32px;height:32px;flex-shrink:0;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;
+}
+.rp-green{background:rgba(34,197,94,.12)}
+.rp-blue{background:rgba(59,130,246,.12)}
+.rp-yellow{background:rgba(234,179,8,.12)}
+.report-point h4{font-size:.9375rem;font-weight:600;color:var(--white);margin-bottom:.125rem}
+.report-point p{font-size:.8125rem;color:var(--muted);line-height:1.5}
+.report-mock{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.rm-header{
+  background:#0f172a;padding:1.25rem 1.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.rm-brand{color:var(--white);font-size:1rem;font-weight:700}
+.rm-brand-sub{color:var(--muted);font-size:.75rem}
+.rm-score{
+  font-size:1.5rem;font-weight:800;color:var(--green);line-height:1;
+  text-align:right;
+}
+.rm-score-sub{font-size:.6875rem;color:var(--muted);margin-top:.125rem}
+.rm-meta{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  border-bottom:1px solid var(--border);
+}
+.rm-meta-item{
+  padding:.75rem 1.25rem;border-right:1px solid var(--border);
+}
+.rm-meta-item:last-child{border-right:none}
+.rm-meta-item label{
+  display:block;font-size:.6rem;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--muted);margin-bottom:.125rem;
+}
+.rm-meta-item span{font-size:.8125rem;font-weight:500;color:var(--white)}
+.rm-table{width:100%;border-collapse:collapse;font-size:.8125rem}
+.rm-table th{
+  text-align:left;padding:.6rem 1.25rem;
+  font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);border-bottom:1px solid var(--border);
+}
+.rm-table td{
+  padding:.625rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.03);
+  color:var(--dimmed);
+}
+.rm-table tr:last-child td{border-bottom:none}
+.rm-badge{
+  display:inline-block;padding:.15rem .45rem;border-radius:3px;
+  font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+}
+.rm-pass{background:rgba(34,197,94,.15);color:#4ade80}
+.rm-warn{background:rgba(234,179,8,.12);color:#fbbf24}
+
+/* ─── WHO ─────────────────────────────────────── */
+.who-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1.25rem;margin-top:3rem;
+}
+@media(max-width:700px){.who-grid{grid-template-columns:1fr}}
+.who-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:1.75rem;
+}
+.who-emoji{font-size:1.75rem;margin-bottom:1rem}
+.who-card h3{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
+.who-card p{font-size:.875rem;color:var(--muted);line-height:1.6}
+
+/* ─── WAITLIST ────────────────────────────────── */
+.waitlist-section{
+  background:linear-gradient(135deg,rgba(34,197,94,.06) 0%,rgba(59,130,246,.06) 100%);
+  border-top:1px solid var(--border);
+  text-align:center;
+}
+.waitlist-inner{max-width:520px;margin:0 auto}
+.waitlist-inner .section-sub{margin:0 auto 2rem}
+.wl-form{
+  display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;
+}
+.wl-input{
+  flex:1;min-width:220px;
+  padding:.7rem 1rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--white);font-size:.9375rem;
+  outline:none;transition:border-color .2s;
+}
+.wl-input::placeholder{color:var(--muted)}
+.wl-input:focus{border-color:var(--green)}
+.wl-submit{
+  padding:.7rem 1.5rem;
+  background:var(--green);color:#0a0f1c;
+  font-size:.9375rem;font-weight:700;
+  border:none;border-radius:8px;cursor:pointer;
+  transition:opacity .15s,transform .1s;
+  white-space:nowrap;
+}
+.wl-submit:hover{opacity:.9;transform:translateY(-1px)}
+.wl-note{margin-top:1rem;font-size:.8125rem;color:var(--muted)}
+.wl-success{
+  display:none;
+  padding:1rem 1.5rem;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);
+  border-radius:8px;color:var(--green);font-weight:500;
+}
+
+/* ─── FOOTER ──────────────────────────────────── */
+footer{
+  border-top:1px solid var(--border);
+  padding:2rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{font-size:.9375rem;font-weight:700;color:var(--white)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{font-size:.8125rem;color:var(--muted);transition:color .15s}
+.footer-links a:hover{color:var(--white)}
+.footer-right{font-size:.8125rem;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>fort</span></div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#checks">Checks</a>
+    <a href="#waitlist">Team</a>
+    <a href="https://github.com/djadmin/fort" class="nav-gh" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Open source · macOS · v0.1.0
+  </div>
+  <h1>One command.<br>Every Mac.<br><em>SOC 2 ready.</em></h1>
+  <p class="hero-sub">
+    fort audits your Mac's security settings, fixes what it finds, and produces a timestamped compliance report — no MDM, no signup, no agent.
+  </p>
+
+  <div class="terminal-wrap">
+    <div class="terminal">
+      <div class="t-bar">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span class="t-title">zsh — fort</span>
+      </div>
+      <div class="t-body" id="terminal-out"></div>
+    </div>
+  </div>
+
+  <div class="install-row">
+    <div class="install-cmd">
+      <span>go install github.com/djadmin/fort/cmd/fort@latest</span>
+      <button class="copy-btn" onclick="copyInstall(this)" title="Copy">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="5" y="5" width="8" height="8" rx="1.5"/>
+          <path d="M3 11V3h8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a href="https://github.com/djadmin/fort" target="_blank" rel="noopener" class="btn btn-primary">
+      View on GitHub
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    </a>
+    <a href="#waitlist" class="btn btn-ghost">Join waitlist for teams →</a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-label">How it works</div>
+    <div class="section-title">Audit. Fix. Prove.</div>
+    <p class="section-sub">Three commands cover the entire compliance workflow. No dashboard to learn, no agent to manage.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">Step 01</div>
+        <div class="step-cmd">$ fort</div>
+        <h3>See what's failing</h3>
+        <p>Audits all 8 security controls in under 2 seconds. Score, current state, expected state — no interpretation needed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">Step 02</div>
+        <div class="step-cmd">$ fort --fix</div>
+        <h3>Fix it automatically</h3>
+        <p>Remediates every fixable setting. Use <code style="background:#1e2736;padding:.1em .3em;border-radius:3px;font-size:.85em">--dry-run</code> first to see exactly what changes before it runs.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">Step 03</div>
+        <div class="step-cmd">$ fort --report</div>
+        <h3>Evidence for auditors</h3>
+        <p>Writes a timestamped HTML report with machine identity, per-check results, and SOC 2 control references. Print to PDF in one click.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHECKS -->
+<section id="checks">
+  <div class="container">
+    <div class="section-label">What it checks</div>
+    <div class="section-title">8 controls. Zero guesswork.</div>
+    <p class="section-sub">Every check uses stable, documented macOS APIs. No private frameworks. Works on macOS 12 Monterey through the latest release.</p>
+    <div class="checks-grid">
+
+      <div class="check-item">
+        <div class="check-icon">🔐</div>
+        <div class="check-info">
+          <div class="check-name">
+            Password manager
+            <span class="tag tag-soc">CC6.1</span>
+          </div>
+          <div class="check-desc">Detects 1Password, Bitwarden, LastPass, and 9 other managers in /Applications.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">💾</div>
+        <div class="check-info">
+          <div class="check-name">
+            Disk encryption (FileVault)
+            <span class="tag tag-soc">CC6.1</span>
+          </div>
+          <div class="check-desc">Verified via <code style="font-size:.8em;color:#94a3b8">fdesetup status</code>. High confidence, no guessing.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🔒</div>
+        <div class="check-info">
+          <div class="check-name">
+            Screen lock
+            <span class="tag tag-soc">CC6.1</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Password required on sleep, delay set to immediate. Fixable without sudo.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🛡️</div>
+        <div class="check-info">
+          <div class="check-name">
+            Antivirus / EDR
+            <span class="tag tag-soc">CC6.8</span>
+          </div>
+          <div class="check-desc">Detects CrowdStrike Falcon, SentinelOne, Malwarebytes, and 14 others by app and process.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🔥</div>
+        <div class="check-info">
+          <div class="check-name">
+            Application firewall
+            <span class="tag tag-soc">CC6.6</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">macOS built-in application-layer firewall via <code style="font-size:.8em;color:#94a3b8">socketfilterfw</code>.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🚪</div>
+        <div class="check-info">
+          <div class="check-name">
+            Gatekeeper
+            <span class="tag tag-soc">CC6.8</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Blocks unsigned and unnotarized apps from running on the system.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🌐</div>
+        <div class="check-info">
+          <div class="check-name">
+            Remote login (SSH)
+            <span class="tag tag-soc">CC6.6</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Inbound SSH should be off on employee laptops. Detected via launchctl without sudo.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🔄</div>
+        <div class="check-info">
+          <div class="check-name">
+            Automatic OS updates
+            <span class="tag tag-soc">CC7.1</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Ensures security patches are automatically checked. Required for most compliance frameworks.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EVIDENCE REPORT -->
+<section class="report-section">
+  <div class="container">
+    <div class="report-inner">
+      <div>
+        <div class="section-label">Evidence report</div>
+        <div class="section-title">Auditor-ready in seconds.</div>
+        <p class="section-sub" style="margin-bottom:2rem">Run <code style="background:#1e2736;padding:.15em .4em;border-radius:4px;color:#22c55e">fort --report</code> and hand the file to your auditor. No portal, no upload, no waiting.</p>
+        <div class="report-points">
+          <div class="report-point">
+            <div class="report-point-icon rp-green">✓</div>
+            <div>
+              <h4>Machine identity included</h4>
+              <p>Hostname, serial number, OS version, and timestamp — everything an auditor needs to verify the evidence is real.</p>
+            </div>
+          </div>
+          <div class="report-point">
+            <div class="report-point-icon rp-blue">📄</div>
+            <div>
+              <h4>Print to PDF in one click</h4>
+              <p>Self-contained HTML file. Open in any browser, hit Cmd+P. No external dependencies, no server required.</p>
+            </div>
+          </div>
+          <div class="report-point">
+            <div class="report-point-icon rp-yellow">🗺️</div>
+            <div>
+              <h4>SOC 2 control references</h4>
+              <p>Each check maps to the relevant SOC 2 Trust Services Criteria (CC6.x, CC7.x). Shows auditors exactly what's covered.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="report-mock">
+          <div class="rm-header">
+            <div>
+              <div class="rm-brand">fort</div>
+              <div class="rm-brand-sub">Endpoint Security Assessment</div>
+            </div>
+            <div>
+              <div class="rm-score">8/8</div>
+              <div class="rm-score-sub">8 pass · 0 fail · 0 warn</div>
+            </div>
+          </div>
+          <div class="rm-meta">
+            <div class="rm-meta-item"><label>Machine</label><span>alice-mbp</span></div>
+            <div class="rm-meta-item"><label>macOS</label><span>15.5</span></div>
+            <div class="rm-meta-item"><label>Serial</label><span>C02XF2K...</span></div>
+            <div class="rm-meta-item"><label>Generated</label><span>May 21, 2026</span></div>
+          </div>
+          <table class="rm-table">
+            <thead><tr><th>Check</th><th>Status</th><th>Found</th></tr></thead>
+            <tbody>
+              <tr><td>Password manager</td><td><span class="rm-badge rm-pass">pass</span></td><td>1Password</td></tr>
+              <tr><td>Disk encryption</td><td><span class="rm-badge rm-pass">pass</span></td><td>on</td></tr>
+              <tr><td>Screen lock</td><td><span class="rm-badge rm-pass">pass</span></td><td>immediate</td></tr>
+              <tr><td>Antivirus / EDR</td><td><span class="rm-badge rm-warn">warn</span></td><td>XProtect only</td></tr>
+              <tr><td>Application firewall</td><td><span class="rm-badge rm-pass">pass</span></td><td>on</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section>
+  <div class="container">
+    <div class="section-label">Who it's for</div>
+    <div class="section-title">Built for teams that move fast.</div>
+    <div class="who-grid">
+      <div class="who-card">
+        <div class="who-emoji">🚀</div>
+        <h3>Startups doing SOC 2</h3>
+        <p>Get every Mac green before your first audit. No MDM enrollment, no IT department needed. One command per machine.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-emoji">🧑‍💼</div>
+        <h3>vCISOs & consultants</h3>
+        <p>Run fort across your client's fleet, collect the HTML reports, and hand a before/after to the auditor. Repeatable, professional, fast.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-emoji">💼</div>
+        <h3>BYOD & contractor teams</h3>
+        <p>Contractors can self-attest without enrolling in MDM. Transparent, local, open-source — they can read every line before running it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist-section" id="waitlist">
+  <div class="container">
+    <div class="waitlist-inner">
+      <div class="section-label">Coming soon</div>
+      <div class="section-title">Team dashboard.</div>
+      <p class="section-sub">Fleet view, drift alerts, policy files, and auditor exports — across every Mac in your org. Join the waitlist and we'll reach out first.</p>
+      <form class="wl-form" id="wl-form" onsubmit="submitWaitlist(event)">
+        <input type="email" class="wl-input" placeholder="you@company.com" required id="wl-email">
+        <button type="submit" class="wl-submit">Join waitlist</button>
+      </form>
+      <div class="wl-success" id="wl-success">✓ You're on the list — we'll be in touch.</div>
+      <p class="wl-note">No spam. Unsubscribe anytime. The CLI is always free.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">fort</div>
+  <div class="footer-links">
+    <a href="https://github.com/djadmin/fort" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/djadmin/fort/blob/main/README.md" target="_blank" rel="noopener">Docs</a>
+    <a href="https://github.com/djadmin/fort/blob/main/BACKLOG.md" target="_blank" rel="noopener">Roadmap</a>
+    <a href="https://github.com/djadmin/fort/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+  </div>
+  <div class="footer-right">Transparent by design. Read the source.</div>
+</footer>
+
+<script>
+// ── Terminal animation ───────────────────────────────────────
+const lines = [
+  { html: '<span class="c-muted">$ </span><span class="c-white">fort</span>' },
+  { html: '' },
+  { html: '<span class="c-dim">  fort v0.1.0  —  alice-mbp (macOS 15.5)</span>' },
+  { html: '<span class="c-dim">  ' + '─'.repeat(49) + '</span>' },
+  { html: '' },
+  { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Password manager</span> <span class="c-dim">1Password</span>' },
+  { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Disk encryption</span>  <span class="c-dim">on</span>' },
+  { html: '  <span class="c-red">✗</span>  <span class="c-white" style="display:inline-block;width:22ch">Screen lock</span>      <span class="c-dim">off</span>  <span class="c-muted" style="font-size:.9em">expected: immediate</span>' },
+  { html: '  <span class="c-yellow">~</span>  <span class="c-white" style="display:inline-block;width:22ch">Antivirus / EDR</span>  <span class="c-dim">XProtect only</span>  <span class="c-muted" style="font-size:.9em">expected: third-party</span>' },
+  { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Application firewall</span> <span class="c-dim">on</span>' },
+  { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Gatekeeper</span>       <span class="c-dim">enabled</span>' },
+  { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Remote login (SSH)</span> <span class="c-dim">off</span>' },
+  { html: '  <span class="c-red">✗</span>  <span class="c-white" style="display:inline-block;width:22ch">Automatic OS updates</span> <span class="c-dim">off</span>  <span class="c-muted" style="font-size:.9em">expected: on</span>' },
+  { html: '' },
+  { html: '<span class="c-dim">  ' + '─'.repeat(49) + '</span>' },
+  { html: '  <span class="c-bold-red">Score: 6/8</span>  <span class="c-muted">(6 pass, 2 fail, 1 warn)</span>' },
+  { html: '' },
+  { html: '<span class="c-dim">  Run fort --fix to remediate fixable issues.</span>' },
+];
+
+const out = document.getElementById('terminal-out');
+let i = 0;
+
+function showNextLine() {
+  if (i >= lines.length) return;
+  const div = document.createElement('div');
+  div.className = 'tl';
+  div.innerHTML = lines[i].html || '&nbsp;';
+  out.appendChild(div);
+  requestAnimationFrame(() => div.classList.add('show'));
+  i++;
+  setTimeout(showNextLine, i <= 4 ? 120 : 180);
+}
+
+// Start animation when hero scrolls into view
+const observer = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    observer.disconnect();
+    setTimeout(showNextLine, 600);
+  }
+}, { threshold: 0.3 });
+observer.observe(document.querySelector('.hero'));
+
+// ── Copy install command ─────────────────────────────────────
+function copyInstall(btn) {
+  navigator.clipboard.writeText('go install github.com/djadmin/fort/cmd/fort@latest').then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,8 6,12 14,4"/></svg>';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>';
+    }, 2000);
+  });
+}
+
+// ── Waitlist form ────────────────────────────────────────────
+function submitWaitlist(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+
+  // TODO: replace with your actual endpoint (Formspree, Loops, etc.)
+  // fetch('https://formspree.io/f/YOUR_ID', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ email })
+  // });
+
+  console.log('Waitlist signup:', email); // wire up your backend here
+  document.getElementById('wl-form').style.display = 'none';
+  document.getElementById('wl-success').style.display = 'block';
+}
+</script>
+</body>
+</html>
