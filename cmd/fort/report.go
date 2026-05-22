@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/djadmin/fort/internal/checks"
 )
+
+// policyRow enriches a Result with framework control mappings for the report.
+type policyRow struct {
+	checks.Result
+	Frameworks []checks.FrameworkEntry
+}
 
 type reportData struct {
 	Version   string
@@ -16,7 +23,7 @@ type reportData struct {
 	OSVersion string
 	Timestamp string
 	Summary   jsonSummary
-	Policies  []checks.Result
+	Policies  []policyRow
 }
 
 func writeReport(results []checks.Result, hostname, serial, osVer, outPath string) error {
@@ -26,6 +33,14 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 		scoreClass = "fail"
 	} else if warn > 0 {
 		scoreClass = "warn"
+	}
+
+	policies := make([]policyRow, len(results))
+	for i, r := range results {
+		policies[i] = policyRow{
+			Result:     r,
+			Frameworks: checks.FrameworksFor(r.ID),
+		}
 	}
 
 	data := reportData{
@@ -41,11 +56,13 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 			Warn:  warn,
 			Score: fmt.Sprintf("%d/%d", pass, len(results)),
 		},
-		Policies: results,
+		Policies: policies,
 	}
 
 	funcMap := template.FuncMap{
 		"scoreClass": func() string { return scoreClass },
+		"fwClass":    func(name string) string { return "fw-" + strings.ToLower(strings.ReplaceAll(name, " ", "")) },
+		"join":       func(s []string, sep string) string { return strings.Join(s, sep) },
 	}
 
 	tmpl, err := template.New("report").Funcs(funcMap).Parse(reportTmpl)
@@ -70,16 +87,14 @@ const reportTmpl = `<!DOCTYPE html>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:#f1f5f9;color:#0f172a;padding:2rem 1rem;font-size:15px;line-height:1.5}
-.wrap{max-width:760px;margin:0 auto}
+.wrap{max-width:900px;margin:0 auto}
 .card{background:white;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.07),0 0 0 1px rgba(0,0,0,.04);margin-bottom:1rem}
 .header{background:#0f172a;padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center}
 .brand{color:white;font-size:1.25rem;font-weight:700;letter-spacing:-.025em}
 .brand-sub{color:#64748b;font-size:.8125rem;margin-top:.125rem}
 .score-box{text-align:right}
 .score-num{font-size:2.25rem;font-weight:700;line-height:1}
-.score-num.pass{color:#4ade80}
-.score-num.fail{color:#f87171}
-.score-num.warn{color:#fbbf24}
+.score-num.pass{color:#4ade80}.score-num.fail{color:#f87171}.score-num.warn{color:#fbbf24}
 .score-sub{color:#64748b;font-size:.75rem;margin-top:.25rem}
 .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));border-bottom:1px solid #f1f5f9}
 .meta-item{padding:1rem 2rem;border-right:1px solid #f1f5f9}
@@ -88,16 +103,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .meta-item span{font-size:.9375rem;font-weight:500}
 table{width:100%;border-collapse:collapse}
 thead tr{border-bottom:2px solid #f1f5f9}
-th{text-align:left;font-size:.6875rem;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;padding:.75rem 2rem;font-weight:500}
-td{padding:.9rem 2rem;border-bottom:1px solid #f8fafc;vertical-align:middle}
+th{text-align:left;font-size:.6875rem;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;padding:.75rem 1.25rem;font-weight:500}
+td{padding:.75rem 1.25rem;border-bottom:1px solid #f8fafc;vertical-align:top}
 tr:last-child td{border-bottom:none}
-.check-name{font-weight:500}
+.check-name{font-weight:500;font-size:.9375rem}
 .badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:4px;font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .badge.pass{background:#dcfce7;color:#15803d}
 .badge.fail{background:#fee2e2;color:#b91c1c}
 .badge.warn{background:#fef9c3;color:#92400e}
 .fixed-tag{display:inline-flex;align-items:center;margin-left:.375rem;padding:.2rem .45rem;border-radius:4px;font-size:.6875rem;font-weight:600;background:#dbeafe;color:#1d4ed8}
-.val{color:#374151}
+.val{color:#374151;font-size:.9375rem}
+.fw-wrap{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.375rem}
+.fw-group{display:inline-flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+.fw-name{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;white-space:nowrap}
+.ctrl{font-size:.6875rem;padding:.1rem .35rem;border-radius:3px;font-family:ui-monospace,monospace;white-space:nowrap}
+.fw-soc2 .ctrl{background:#ede9fe;color:#7c3aed}
+.fw-iso27001 .ctrl{background:#dbeafe;color:#1d4ed8}
+.fw-nistcsf .ctrl{background:#dcfce7;color:#15803d}
+.fw-cisv8 .ctrl{background:#fef9c3;color:#92400e}
 .footer{text-align:center;color:#94a3b8;font-size:.75rem;padding:1.5rem}
 .footer a{color:#64748b;text-decoration:none}
 @media print{
@@ -130,7 +153,13 @@ tr:last-child td{border-bottom:none}
 
     <table>
       <thead>
-        <tr><th>Check</th><th>Status</th><th>Found</th><th>Required</th></tr>
+        <tr>
+          <th>Check</th>
+          <th>Status</th>
+          <th>Found</th>
+          <th>Required</th>
+          <th>Controls</th>
+        </tr>
       </thead>
       <tbody>
         {{range .Policies}}
@@ -141,6 +170,16 @@ tr:last-child td{border-bottom:none}
           </td>
           <td class="val">{{.Current}}</td>
           <td class="val">{{.Expected}}</td>
+          <td>
+            <div class="fw-wrap">
+              {{range .Frameworks}}
+              <div class="fw-group {{fwClass .Name}}">
+                <span class="fw-name">{{.Name}}</span>
+                {{range .Controls}}<span class="ctrl">{{.}}</span>{{end}}
+              </div>
+              {{end}}
+            </div>
+          </td>
         </tr>
         {{end}}
       </tbody>

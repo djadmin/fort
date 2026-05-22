@@ -20,14 +20,20 @@ const (
 )
 
 type jsonReport struct {
-	Tool      string          `json:"tool"`
-	Version   string          `json:"version"`
-	Hostname  string          `json:"hostname"`
-	Serial    string          `json:"serial"`
-	OSVersion string          `json:"os_version"`
-	Timestamp string          `json:"timestamp"`
-	Summary   jsonSummary     `json:"summary"`
-	Policies  []checks.Result `json:"policies"`
+	Tool      string       `json:"tool"`
+	Version   string       `json:"version"`
+	Hostname  string       `json:"hostname"`
+	Serial    string       `json:"serial"`
+	OSVersion string       `json:"os_version"`
+	Timestamp string       `json:"timestamp"`
+	Summary   jsonSummary  `json:"summary"`
+	Policies  []jsonPolicy `json:"policies"`
+}
+
+// jsonPolicy wraps a Result with compliance framework control mappings.
+type jsonPolicy struct {
+	checks.Result
+	Frameworks map[string][]string `json:"frameworks,omitempty"`
 }
 
 type jsonSummary struct {
@@ -132,9 +138,22 @@ func printJSON(results []checks.Result, hostname, serial, osVer string) {
 			Warn:  warn,
 			Score: fmt.Sprintf("%d/%d", pass, len(results)),
 		},
-		Policies: results,
+		Policies: toJSONPolicies(results),
 	}
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	_ = enc.Encode(report)
+}
+
+func toJSONPolicies(results []checks.Result) []jsonPolicy {
+	out := make([]jsonPolicy, len(results))
+	for i, r := range results {
+		fw := checks.FrameworksFor(r.ID)
+		fwMap := make(map[string][]string, len(fw))
+		for _, f := range fw {
+			fwMap[f.Name] = f.Controls
+		}
+		out[i] = jsonPolicy{Result: r, Frameworks: fwMap}
+	}
+	return out
 }
