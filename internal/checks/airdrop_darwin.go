@@ -32,6 +32,7 @@ func (c *AirDropCheck) Run() Result {
 			return Result{
 				ID: c.ID(), Name: c.Name(),
 				Status: StatusWarn, Current: "unknown", Expected: "Contacts Only or Off",
+				Fixable: true,
 			}
 		}
 		out = out2
@@ -55,6 +56,7 @@ func (c *AirDropCheck) Run() Result {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusWarn, Current: mode, Expected: "Contacts Only or Off",
+			Fixable: true,
 		}
 	}
 }

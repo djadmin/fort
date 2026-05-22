@@ -33,10 +33,38 @@ internal/checks/
 ## Adding a check (macOS)
 
 1. Create `internal/checks/yourcheck_darwin.go`
-2. Implement the `Check` interface: `ID()`, `Name()`, `Run()`, `Fixable()`, `Fix()`, `FixDescription()`
-3. Non-fixable checks return `false`/`nil`/`""` for Fixable/Fix/FixDescription
-4. Add to `All()` in `registry_darwin.go`
-5. Run `make test` — `TestFixableConsistency` will catch interface mismatches
+2. Implement `Check` interface: `ID()`, `Name()`, `Run()`, `Fixable()`, `Fix()`, `FixDescription()`
+3. Non-fixable: return `false`/`nil`/`""` for Fixable/Fix/FixDescription
+4. **Every `Run()` branch must set `Fixable: c.Fixable()`** — `TestFixableConsistency` enforces this
+5. Add to `All()` in `registry_darwin.go` and update `TestRegistryCount` expected count
+6. Add framework mappings in `internal/checks/frameworks.go` — `TestAllChecksHaveFrameworkMappings` enforces this
+7. Run `make test` — all 20+ tests must pass
+
+## Testing rules
+
+**Every feature and check must have test coverage. No exceptions.**
+
+```
+internal/checks/checks_test.go   — check interface contracts, registry, framework mappings
+cmd/fort/output_test.go          — tally(), anyFixable(), toJSONPolicies()
+cmd/fort/report_test.go          — writeReport() HTML output, all key elements
+```
+
+**What tests enforce (will break CI if violated):**
+- `TestRegistryCount` — update the count when adding/removing a check
+- `TestFixableConsistency` — every `Run()` branch must set `Fixable: c.Fixable()`
+- `TestFixableChecksHaveDescription` — fixable checks must have `FixDescription()`
+- `TestAllChecksHaveFrameworkMappings` — every check needs framework mappings
+- `TestKnownFrameworks` — every check maps to all four frameworks (SOC 2, ISO 27001, NIST CSF, CIS v8)
+- `TestNoDuplicateIDs` — check IDs must be globally unique
+- `TestCheckIDsAreLowercase` — IDs must be lowercase, no whitespace
+
+**What we don't mock (yet):** OS commands (`defaults`, `launchctl`, etc.) run for real in tests.
+This means tests verify the current machine state, not simulated states. When the Windows/Linux
+agents are added, use build tags to run platform-specific tests only on that OS in CI.
+
+**CI:** GitHub Actions runs `go test ./...` on every push to `main` and on every tag.
+The workflow is `.github/workflows/ci.yml`. Keep it green at all times.
 
 ## Key decisions
 
