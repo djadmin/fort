@@ -1,12 +1,14 @@
 # fort — backlog
 
-## Status: v0.1.0 — shipped locally, not yet on GitHub
+## Status: v0.1.0 — built and tested, repo at github.com/djadmin/fort (private)
+
+**Sharing with trial users now:** `make build` → AirDrop/Slack the `fort` binary. Zero dependencies, runs immediately after `chmod +x fort`. For Intel Macs: `GOARCH=amd64 make build`.
 
 ---
 
 ## Done
 
-- [x] 15 macOS checks covering all major SOC 2 endpoint controls (CC6.1, CC6.3, CC6.6, CC6.7, CC6.8)
+- [x] 15 macOS checks — full SOC 2 endpoint coverage (CC6.1, CC6.3, CC6.6, CC6.7, CC6.8)
   - Core: password manager, FileVault, screen lock, AV/EDR
   - Hardening: firewall, Gatekeeper, SIP, SSH off
   - Access: local admin rights, guest account, auto-login
@@ -14,23 +16,23 @@
   - Patching: auto-updates, OS patch status
 - [x] `--fix` with per-check auto-remediation + error handling
 - [x] `--dry-run` showing exact commands before applying
-- [x] `--json` structured output (stable fleet contract)
-- [x] `--report` HTML evidence artifact (print-to-PDF ready)
-- [x] Score display with pass/fail/warn counts
-- [x] GoReleaser config + GitHub Actions CI + release workflow
-- [x] Landing page (`http://fort-landing.localhost`) with waitlist (Go server, saves to CSV)
-- [x] SOC2.md — full coverage analysis, gap analysis, competitive comparison
-- [x] Go build, `make install` to `~/.local/bin`
+- [x] `--json` structured JSON output (stable fleet contract)
+- [x] `--report` — HTML evidence report (print-to-PDF, accessible, multi-framework)
+- [x] Multi-framework control mappings: SOC 2, ISO 27001, NIST CSF, CIS v8
+- [x] 20+ tests across checks, output, and report packages
+- [x] GoReleaser config + GitHub Actions (CI on push, release on tag)
+- [x] Landing page at `http://fort-landing.localhost` with working waitlist (Go server, CSV)
+- [x] SOC2.md — coverage analysis, gap analysis, competitive comparison
+- [x] CLAUDE.md with testing rules and architecture guide
 
 ---
 
-## Now — launch prep (this week)
+## Now — next immediate items
 
-- [ ] **Git init + push to github.com/djadmin/fort** (public, MIT)
-- [ ] **Code sign + notarize binary** — required for `--fix` trust. Without this, macOS may block execution for downloaded binaries. Use Apple Developer account.
-- [ ] **GoReleaser config** — multi-arch builds (darwin/amd64, darwin/arm64), GitHub releases, checksums, SBOM
-- [ ] **Homebrew tap** — `brew install djadmin/tap/fort`
-- [ ] **Landing page** — single HTML page (no framework): headline "Get every Mac ready for SOC 2 in 10 minutes", terminal demo gif, example HTML report screenshot, email waitlist for team features
+- [ ] **Exit codes** — `exit 0` all pass · `exit 1` any fail · `exit 2` any warn. One line in `main.go`. Required for CI/CD gates and cron scripts.
+- [ ] **Make repo public** — when ready for trial feedback. Flip visibility in GitHub settings, no code changes needed.
+- [ ] **Code signing + notarization** — before wide distribution. Without this, macOS Gatekeeper blocks downloaded binaries for non-developers. Requires Apple Developer account.
+- [ ] **Homebrew tap** — `brew install djadmin/tap/fort` — after a few trial runs confirm the tool is solid. Create `djadmin/homebrew-tap` repo → add `HOMEBREW_TAP_GITHUB_TOKEN` secret → `make tag v0.1.0`.
 
 ---
 
