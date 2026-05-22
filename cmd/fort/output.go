@@ -41,7 +41,7 @@ type jsonSummary struct {
 func printHuman(results []checks.Result, hostname, osVer string) {
 	pass, fail, warn := tally(results)
 	total := len(results)
-	sep := strings.Repeat("─", 55)
+	sep := strings.Repeat("─", 67)
 
 	fmt.Printf("\n  %sfort v%s%s  —  %s (macOS %s)\n", colorBold, version, colorReset, hostname, osVer)
 	fmt.Printf("  %s%s%s\n\n", colorDim, sep, colorReset)
@@ -69,8 +69,8 @@ func printHuman(results []checks.Result, hostname, osVer string) {
 
 func printRow(r checks.Result) {
 	icon, col := statusIcon(r.Status)
-	name := fmt.Sprintf("%-24s", r.Name)
-	current := fmt.Sprintf("%-18s", r.Current)
+	name := fmt.Sprintf("%-26s", r.Name)
+	current := fmt.Sprintf("%-28s", r.Current)
 
 	fmt.Printf("  %s%s%s  %s %s", col, icon, colorReset, name, current)
 	if r.Status != checks.StatusPass {

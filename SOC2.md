@@ -66,41 +66,47 @@ CC7.3   Recovery (if Availability is in scope)
 
 ---
 
-## Fort's current SOC 2 coverage
+## Fort's current SOC 2 coverage — 15 checks
 
-### ✅ Covered (8 checks)
+### ✅ Covered
 
-| Check | Criterion | Auto-fix |
+| Check | Criterion | Auto-fix | Category |
+|--|--|--|--|
+| Password manager installed | CC6.1 | — | Core security |
+| FileVault (disk encryption) | CC6.7, CC6.1 | — (needs reboot) | Core security |
+| Screen lock (on + immediate) | CC6.1, CC6.6 | ✅ | Core security |
+| Antivirus / EDR presence | CC6.8, CC7.1 | — | Core security |
+| Application firewall | CC6.6 | ✅ (sudo) | System hardening |
+| Gatekeeper | CC6.8 | ✅ (sudo) | System hardening |
+| System Integrity Protection (SIP) | CC6.8 | — (recovery mode) | System hardening |
+| Remote login (SSH) off | CC6.6 | ✅ (sudo) | System hardening |
+| Local admin rights | CC6.3, CC6.8 | — | Access controls |
+| Guest account disabled | CC6.1 | ✅ (sudo) | Access controls |
+| Automatic login disabled | CC6.1 | ✅ (sudo) | Access controls |
+| Sharing services off | CC6.6 | — | Exposure reduction |
+| AirDrop restricted | CC6.6 | ✅ | Exposure reduction |
+| Automatic OS updates | CC6.8 | ✅ (sudo) | Patching |
+| OS patch status (pending updates) | CC6.8 | — | Patching |
+
+### ⚠️ Remaining partial coverage
+
+| Check | Issue | Impact |
 |--|--|--|
-| Password manager installed | CC6.1 | — |
-| FileVault (disk encryption) | CC6.7, CC6.1 | — (needs reboot) |
-| Screen lock | CC6.1, CC6.6 | ✅ |
-| Antivirus / EDR presence | CC6.8, CC7.1 | — |
-| Application firewall | CC6.6 | ✅ (sudo) |
-| Gatekeeper | CC6.8 | ✅ (sudo) |
-| Remote login (SSH) off | CC6.6 | ✅ (sudo) |
-| Automatic OS updates | CC6.8 | ✅ (sudo) |
+| EDR "active" vs "installed" | We detect presence (app/process). Cannot verify agent is connected to management console or telemetry is flowing. | Auditors want EDR enrollment proof, not just install. |
+| Screen lock idle timeout | We verify lock-on-sleep is immediate but not the screensaver idle timeout (should be ≤ 5–10 min). | Low — immediate lock on sleep is the primary control. |
+| AirDrop on newer macOS | The `com.apple.sharingd` defaults domain may be inaccessible on future OS versions, returning warn. | Low — fixable as we verify per macOS release. |
 
-### ❌ Missing — high priority (next sprint, target: v0.1.1)
+### ❌ Still missing (lower priority, or requires MDM/enterprise)
 
-| Check | Criterion | Why it matters |
+| Check | Criterion | Notes |
 |--|--|--|
-| Local admin rights check | CC6.3, CC6.8 | Most commonly cited audit finding. Users running as admin can install malware, bypass controls. Vanta, Drata, Pareto all check this. |
-| Guest account disabled | CC6.1 | Physical access to a Mac with guest enabled bypasses logical access controls. |
-| System Integrity Protection (SIP) | CC6.8 | SIP prevents root-level modification of system files. Disabling it is a red flag. Gatekeeper and XProtect depend on SIP. |
-| Sharing services off | CC6.6 | File Sharing, Printer Sharing, Internet Sharing, Remote Management — each is an attack surface. Pareto checks all 5. |
-| Automatic login disabled | CC6.1 | Auto-login machine = physical access bypasses all auth controls. |
-| AirDrop restricted | CC6.6 | Unintended data exfiltration vector. Should be set to "Contacts Only" or "Off". |
-| Current OS version (not just updates on) | CC6.8 | Having updates "on" doesn't mean patches are applied. Auditors check the specific OS version against current release. |
-| Secure Boot | CC6.1 | Prevents boot-level persistence and unauthorized OS booting. |
-
-### ⚠️ Partial coverage
-
-| Check | Issue |
-|--|--|
-| Screen lock timeout | We check on/off + immediate delay. Auditors also want to see the idle timeout (should be ≤ 5–10 min for laptops). |
-| EDR "active" vs. "installed" | We detect presence (app/process). We don't verify the agent is connected to a management console or that telemetry is flowing. |
-| OS updates | We check the setting is on. We should also check the current OS version against latest release. |
+| Secure Boot | CC6.1 | Requires sudo/SIP to detect reliably on Apple Silicon. Added to next sprint. |
+| SSH key strength + passphrase | CC6.6 | Only relevant if SSH is on. Pareto checks RSA 3072+ or Ed25519 + passphrase. |
+| Browser extension audit | CC6.8 | Vanta/Drata enumerate installed extensions. Complex to do without browser API. |
+| Encrypted backup (Time Machine) | CC7.3 | Only if Availability is in SOC 2 scope. |
+| MDM enrollment status | CC6.1 | Cannot detect without MDM agent context. |
+| USB/removable media controls | CC6.7 | Requires MDM configuration profile. |
+| Fleet-wide coverage (Type II) | All CC | Fort is per-machine. Type II needs fleet aggregation → v0.4 dashboard. |
 
 ### 🏗️ Structural gap — Type II
 
@@ -190,23 +196,19 @@ This requires the fleet dashboard (v0.4 in BACKLOG.md). The JSON output (`fort -
 
 ## What to build next (prioritized by SOC 2 impact)
 
-### Sprint 1 — get to 15 checks (closes most SOC 2 endpoint gaps)
+### Done — 15 checks shipped
 
-1. `localadmin` — detect if user is running as local admin (CC6.3)
-2. `guestaccount` — guest account disabled (CC6.1)
-3. `sip` — System Integrity Protection enabled (CC6.8)
-4. `filesharing` — File Sharing + Printer Sharing + Remote Management + Internet Sharing all off (CC6.6)
-5. `autologin` — automatic login disabled (CC6.1)
-6. `airdrop` — AirDrop set to Contacts Only or Off (CC6.6)
-7. `osversion` — check macOS version against current release, not just updates setting (CC6.8)
+All core SOC 2 endpoint controls are now implemented. See BACKLOG.md for next priorities.
 
-### Sprint 2 — evidence quality
+### Next — evidence quality
 
-8. Screen lock timeout value (currently checks on/off; add idle timeout threshold check)
-9. SOC 2 control mapping in `fort --report` (CC numbers next to each check)
-10. `fort --report --format pdf` (via headless Chrome)
+1. SOC 2 control numbers (CC6.x) in `fort --report` HTML output
+2. Screen lock idle timeout value (check screensaver idle ≤ 5 min, not just lock-on-sleep)
+3. Secure Boot detection (Apple Silicon + Intel)
+4. `fort --report --format pdf` (via headless Chrome)
 
-### Sprint 3 — fleet + Type II
+### Then — fleet + Type II
 
-11. Fleet dashboard (v0.4) — POST JSON results to a collector, show all machines, flag drift
-12. Vanta/Drata webhook integration — push results automatically on scan
+5. Fleet dashboard (v0.4) — POST JSON results to a collector, show all machines, flag drift
+6. Vanta/Drata webhook integration — push results automatically on scan
+7. Longitudinal tracking — was every machine compliant throughout the audit period?

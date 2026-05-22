@@ -6,12 +6,20 @@
 
 ## Done
 
-- [x] 8 macOS checks: password manager, FileVault, screen lock, AV/EDR, firewall, Gatekeeper, SSH, OS auto-updates
-- [x] `--fix` with per-check auto-remediation
+- [x] 15 macOS checks covering all major SOC 2 endpoint controls (CC6.1, CC6.3, CC6.6, CC6.7, CC6.8)
+  - Core: password manager, FileVault, screen lock, AV/EDR
+  - Hardening: firewall, Gatekeeper, SIP, SSH off
+  - Access: local admin rights, guest account, auto-login
+  - Exposure: sharing services, AirDrop
+  - Patching: auto-updates, OS patch status
+- [x] `--fix` with per-check auto-remediation + error handling
 - [x] `--dry-run` showing exact commands before applying
 - [x] `--json` structured output (stable fleet contract)
 - [x] `--report` HTML evidence artifact (print-to-PDF ready)
 - [x] Score display with pass/fail/warn counts
+- [x] GoReleaser config + GitHub Actions CI + release workflow
+- [x] Landing page (`http://fort-landing.localhost`) with waitlist (Go server, saves to CSV)
+- [x] SOC2.md — full coverage analysis, gap analysis, competitive comparison
 - [x] Go build, `make install` to `~/.local/bin`
 
 ---

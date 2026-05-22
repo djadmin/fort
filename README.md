@@ -48,18 +48,25 @@ fort --json         # structured JSON output (pipe to dashboard, SIEM, Slack)
 fort --report       # audit + write fort-report-YYYY-MM-DD.html (auditor-ready evidence)
 ```
 
-## Checks
+## Checks — 15 controls, full SOC 2 coverage
 
-| # | Check | How it detects | Auto-fix |
-|---|-------|---------------|----------|
-| 1 | Password manager | Scans `/Applications` for known password managers | — |
-| 2 | Disk encryption (FileVault) | `fdesetup status` | — (needs reboot) |
-| 3 | Screen lock | `defaults read com.apple.screensaver` | ✅ |
-| 4 | Antivirus / EDR | App presence + running processes | — |
-| 5 | Application firewall | `socketfilterfw --getglobalstate` | ✅ (sudo) |
-| 6 | Gatekeeper | `spctl --status` | ✅ (sudo) |
-| 7 | Remote login (SSH) | `launchctl print system/com.openssh.sshd` | ✅ (sudo) |
-| 8 | Automatic OS updates | `defaults read .../SoftwareUpdate` | ✅ (sudo) |
+| # | Check | SOC 2 | How it detects | Auto-fix |
+|---|-------|-------|---------------|----------|
+| 1 | Password manager | CC6.1 | Scans `/Applications` for 12 known managers | — |
+| 2 | Disk encryption (FileVault) | CC6.7 | `fdesetup status` | — (needs reboot) |
+| 3 | Screen lock | CC6.1 | `defaults read com.apple.screensaver` | ✅ |
+| 4 | Antivirus / EDR | CC6.8 | App presence + running processes (17 tools) | — |
+| 5 | Application firewall | CC6.6 | `socketfilterfw --getglobalstate` | ✅ (sudo) |
+| 6 | Gatekeeper | CC6.8 | `spctl --status` | ✅ (sudo) |
+| 7 | System integrity (SIP) | CC6.8 | `csrutil status` | — (recovery mode) |
+| 8 | Remote login (SSH) | CC6.6 | `launchctl print system/com.openssh.sshd` | ✅ (sudo) |
+| 9 | Local admin rights | CC6.3 | `id` — checks if user is in admin group | — |
+| 10 | Guest account | CC6.1 | `defaults read .../loginwindow GuestEnabled` | ✅ (sudo) |
+| 11 | Automatic login | CC6.1 | `defaults read .../loginwindow autoLoginUser` | ✅ (sudo) |
+| 12 | Sharing services | CC6.6 | `launchctl` — checks SMB, screen sharing, ARD, internet sharing | — |
+| 13 | AirDrop | CC6.6 | `defaults read com.apple.sharingd DiscoverableMode` | ✅ |
+| 14 | Automatic OS updates | CC6.8 | `defaults read .../SoftwareUpdate AutomaticCheckEnabled` | ✅ (sudo) |
+| 15 | OS patch status | CC6.8 | Checks `PendingUpdateCount` from cached SoftwareUpdate prefs | — |
 
 Every check uses stable, documented macOS APIs. No private frameworks. macOS 12+.
 
