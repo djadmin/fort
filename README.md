@@ -36,13 +36,10 @@ $ fort
 ## Install
 
 ```bash
-# Install from source
 go install github.com/djadmin/fort/cmd/fort@latest
-
-# For tagged releases, download a prebuilt binary from Releases
-curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort-darwin-arm64 -o fort
-chmod +x fort && sudo mv fort /usr/local/bin/fort
 ```
+
+Pre-built binaries and a Homebrew tap are coming with the first tagged release.
 
 ## Usage
 
