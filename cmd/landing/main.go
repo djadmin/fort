@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/mail"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -43,21 +45,41 @@ func handleWaitlist(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Email string `json:"email"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Email == "" {
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintln(w, `{"error":"email required"}`)
 		return
 	}
 
-	if err := appendEmail(body.Email); err != nil {
+	email, err := cleanEmail(body.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, `{"error":"valid email required"}`)
+		return
+	}
+
+	if err := appendEmail(email); err != nil {
 		log.Printf("waitlist write: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, `{"error":"server error"}`)
 		return
 	}
 
-	log.Printf("waitlist: %s", body.Email)
+	log.Printf("waitlist signup stored")
 	fmt.Fprintln(w, `{"ok":true}`)
+}
+
+func cleanEmail(raw string) (string, error) {
+	email := strings.TrimSpace(strings.ToLower(raw))
+	if email == "" {
+		return "", fmt.Errorf("empty email")
+	}
+	addr, err := mail.ParseAddress(email)
+	if err != nil || addr.Address != email {
+		return "", fmt.Errorf("invalid email")
+	}
+	return email, nil
 }
 
 func appendEmail(email string) error {

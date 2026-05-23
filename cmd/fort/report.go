@@ -111,7 +111,6 @@ const reportTmpl = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Security Assessment · {{.Hostname}}</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -131,8 +130,8 @@ const reportTmpl = `<!DOCTYPE html>
   --fail:#991B1B;--fail-bg:#FEF2F2;--fail-bd:#FECACA;
   --warn:#92400E;--warn-bg:#FFFBEB;--warn-bd:#FDE68A;
   --radius:12px;
-  --font:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-  --mono:'DM Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Monaco,Consolas,monospace;
 }
 body{font-family:var(--font);background:var(--page);color:var(--ink);font-size:13px;line-height:1.6;padding:2rem 1rem;-webkit-font-smoothing:antialiased}
 .doc{max-width:860px;margin:0 auto}

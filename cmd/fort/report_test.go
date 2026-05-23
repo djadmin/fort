@@ -84,6 +84,9 @@ func TestWriteReport(t *testing.T) {
 	// fort branding
 	mustContain(t, html, "fort", "brand")
 	mustContain(t, html, "Confidential", "confidential label")
+
+	// Report must remain self-contained
+	mustNotContain(t, html, "fonts.googleapis.com", "external font dependency")
 }
 
 func TestWriteReportAllPass(t *testing.T) {
@@ -141,6 +144,13 @@ func mustContain(t *testing.T, html, substr, label string) {
 	t.Helper()
 	if !strings.Contains(html, substr) {
 		t.Errorf("report missing %s: %q not found in output", label, substr)
+	}
+}
+
+func mustNotContain(t *testing.T, html, substr, label string) {
+	t.Helper()
+	if strings.Contains(html, substr) {
+		t.Errorf("report unexpectedly contains %s: %q found in output", label, substr)
 	}
 }
 

@@ -3,3 +3,5 @@
 fort-report-*.html
 waitlist.csv
 dist/
+.claude/
+.DS_Store
