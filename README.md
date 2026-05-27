@@ -6,6 +6,12 @@
 
 Built for startups preparing for SOC 2, consultants running client readiness reviews, and BYOD environments that need evidence without full device enrollment.
 
+**[djadmin.github.io/fort](https://djadmin.github.io/fort)**
+
+<img src="docs/fort-audit.png" width="600" alt="fort — 15 security checks, score 11/15">
+
+<img src="docs/fort-fix.png" width="600" alt="fort --fix — interactive prompt, selective apply, score after fixes">
+
 ```text
 $ fort
 
@@ -35,11 +41,23 @@ $ fort
 
 ## Install
 
+**Download (macOS — Apple Silicon + Intel)**
+```bash
+curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/
+```
+
+**Go**
 ```bash
 go install github.com/djadmin/fort/cmd/fort@latest
 ```
 
-Pre-built binaries and a Homebrew tap are coming with the first tagged release.
+**Build from source**
+```bash
+git clone https://github.com/djadmin/fort.git
+cd fort && make install
+```
+
+Homebrew tap coming soon: `brew install djadmin/tap/fort`
 
 ## Usage
 
