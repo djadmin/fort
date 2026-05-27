@@ -1,19 +1,20 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
 
+	survey "github.com/AlecAivazis/survey/v2"
+	"github.com/AlecAivazis/survey/v2/terminal"
 	"github.com/spf13/cobra"
 
 	"github.com/djadmin/fort/internal/checks"
 )
 
-var version = "0.1.0"
+var version = "0.1.1"
 
 func main() {
 	var (
@@ -96,23 +97,47 @@ func run(jsonOutput, fix, dryRun, report, yes bool) (int, error) {
 			// Show what will be changed and ask for confirmation unless --yes.
 			if !yes && !jsonOutput {
 				sep := strings.Repeat("─", 67)
-				fmt.Printf("  %s%s%s\n", colorDim, sep, colorReset)
-				fmt.Printf("  %d fix(es) available:\n\n", len(fixable))
-				for _, p := range fixable {
-					fmt.Printf("    %s✗  %-26s%s %s→  %s%s%s\n",
-						colorRed, p.check.Name(), colorReset,
-						colorDim, colorReset,
-						colorRed, p.result.Expected+colorReset)
-					if desc := p.check.FixDescription(); desc != "" {
-						fmt.Printf("       %s%s%s\n", colorDim, desc, colorReset)
-					}
+				noun := "fix"
+				if len(fixable) != 1 {
+					noun = "fixes"
 				}
-				fmt.Printf("\n  Apply %d fix(es)? [y/N] ", len(fixable))
+				fmt.Printf("\n  %s%s%s\n", colorDim, sep, colorReset)
+				fmt.Printf("  %s%d %s to apply:%s\n\n", colorBold, len(fixable), noun, colorReset)
+				for i, p := range fixable {
+					fmt.Printf("  %s%d.%s %s%s%s\n",
+						colorDim, i+1, colorReset,
+						colorBold, p.check.Name(), colorReset)
+					fmt.Printf("     %scurrent:%s %-16s %s→%s %s%s%s\n",
+						colorDim, colorReset, p.result.Current,
+						colorDim, colorReset,
+						colorGreen, p.result.Expected, colorReset)
+					if desc := p.check.FixDescription(); desc != "" {
+						fmt.Printf("     %s$ %s%s\n", colorDim, desc, colorReset)
+					}
+					fmt.Println()
+				}
+				// Build labelled options — all selected by default.
+				opts := make([]string, len(fixable))
+				for i, p := range fixable {
+					opts[i] = fmt.Sprintf("%-26s  %s → %s", p.check.Name(), p.result.Current, p.result.Expected)
+				}
 
-				scanner := bufio.NewScanner(os.Stdin)
-				scanner.Scan()
-				if strings.ToLower(strings.TrimSpace(scanner.Text())) != "y" {
-					fmt.Printf("  %sNo changes made.%s\n\n", colorDim, colorReset)
+				var chosen []string
+				prompt := &survey.MultiSelect{
+					Message: "Select fixes to apply",
+					Options: opts,
+					Default: opts,
+				}
+				err := survey.AskOne(prompt, &chosen, survey.WithIcons(func(icons *survey.IconSet) {
+					icons.MarkedOption.Text = "✓"
+					icons.MarkedOption.Format = "green+b"
+					icons.UnmarkedOption.Text = "○"
+					icons.UnmarkedOption.Format = "default+d"
+					icons.SelectFocus.Text = "❯"
+					icons.SelectFocus.Format = "green+b"
+				}))
+				if err == terminal.InterruptErr || len(chosen) == 0 {
+					fmt.Printf("\n  %sNo changes made.%s\n\n", colorDim, colorReset)
 					_, fail, warn := tally(results)
 					switch {
 					case fail > 0:
@@ -123,6 +148,19 @@ func run(jsonOutput, fix, dryRun, report, yes bool) (int, error) {
 						return 0, nil
 					}
 				}
+
+				// Keep only what the user selected.
+				chosenSet := map[string]bool{}
+				for _, c := range chosen {
+					chosenSet[c] = true
+				}
+				filtered := fixable[:0]
+				for i, p := range fixable {
+					if chosenSet[opts[i]] {
+						filtered = append(filtered, p)
+					}
+				}
+				fixable = filtered
 				fmt.Println()
 			}
 

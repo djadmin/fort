@@ -1,7 +1,7 @@
 .PHONY: build test clean install lint build-landing serve-landing tag
 
 BINARY  := fort
-VERSION := 0.1.0
+VERSION := 0.1.1
 LDFLAGS := -ldflags="-X main.version=$(VERSION)"
 GO      := mise exec -- go
 
