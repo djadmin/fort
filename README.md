@@ -36,10 +36,12 @@ $ fort
 ## Install
 
 ```bash
+# macOS (Apple Silicon + Intel)
+curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/
+
+# Go
 go install github.com/djadmin/fort/cmd/fort@latest
 ```
-
-Pre-built binaries and a Homebrew tap are coming with the first tagged release.
 
 ## Usage
 
