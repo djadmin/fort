@@ -8,7 +8,6 @@
 <meta property="og:title" content="fort — One command. Every Mac. SOC 2 ready.">
 <meta property="og:description" content="Audit, remediate, and prove endpoint security in seconds.">
 <meta property="og:type" content="website">
-<!-- Google Analytics — replace G-XXXXXXXXXX with your Measurement ID from analytics.google.com -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -906,8 +905,6 @@ function copyCmd(btn, text) {
 }
 
 // ── Waitlist form ────────────────────────────────────────────
-// Using Loops.so — free tier: 1,000 contacts, built for SaaS waitlists.
-// Setup: loops.so → Forms → Create form → copy the form endpoint ID → replace YOUR_LOOPS_FORM_ID below.
 async function submitWaitlist(e) {
   e.preventDefault();
   const email = document.getElementById('wl-email').value;

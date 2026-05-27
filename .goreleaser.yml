@@ -34,7 +34,6 @@ checksum:
   name_template: checksums.txt
   algorithm: sha256
 
-# Homebrew tap — enable after creating djadmin/homebrew-tap and adding HOMEBREW_TAP_GITHUB_TOKEN secret
 # brews:
 #   - name: fort
 #     repository:
