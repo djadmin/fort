@@ -8,6 +8,14 @@
 <meta property="og:title" content="fort — One command. Every Mac. SOC 2 ready.">
 <meta property="og:description" content="Audit, remediate, and prove endpoint security in seconds.">
 <meta property="og:type" content="website">
+<!-- Google Analytics — replace G-XXXXXXXXXX with your Measurement ID from analytics.google.com -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
 <style>
 :root {
   --bg:       #05080f;
@@ -467,12 +475,12 @@ footer{
 
   <div class="install-wrap">
     <div class="install-tabs">
-      <button class="itab active" onclick="switchTab('brew',this)">Homebrew</button>
+      <button class="itab active" onclick="switchTab('curl',this)">macOS</button>
       <button class="itab" onclick="switchTab('go',this)">Go</button>
     </div>
-    <div class="install-cmd" id="install-brew">
-      <span>brew install djadmin/tap/fort</span>
-      <button class="copy-btn" onclick="copyCmd(this,'brew install djadmin/tap/fort')" title="Copy">
+    <div class="install-cmd" id="install-curl">
+      <span>curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_Darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/</span>
+      <button class="copy-btn" onclick="copyCmd(this,'curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_Darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/')" title="Copy">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
       </button>
     </div>
@@ -482,7 +490,7 @@ footer{
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
       </button>
     </div>
-    <span class="install-note" id="install-note-brew">Requires <a href="https://brew.sh" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Homebrew</a></span>
+    <span class="install-note" id="install-note-curl">Apple Silicon &amp; Intel · no prerequisites</span>
     <span class="install-note" id="install-note-go" style="display:none">Requires <a href="https://go.dev" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Go 1.21+</a></span>
   </div>
 
@@ -506,7 +514,7 @@ footer{
         <div class="step-num">Step 01</div>
         <div class="step-cmd">$ fort</div>
         <h3>See what's failing</h3>
-        <p>Audits all 8 security controls in under 2 seconds. Score, current state, expected state — no interpretation needed.</p>
+        <p>Audits all 15 security controls in under 3 seconds. Score, current state, expected state — no interpretation needed.</p>
       </div>
       <div class="step">
         <div class="step-num">Step 02</div>
@@ -528,7 +536,7 @@ footer{
 <section id="checks">
   <div class="container">
     <div class="section-label">What it checks</div>
-    <div class="section-title">8 controls. Zero guesswork.</div>
+    <div class="section-title">15 controls. Zero guesswork.</div>
     <p class="section-sub">Every check uses stable, documented macOS APIs. No private frameworks. Works on macOS 12 Monterey through the latest release.</p>
     <div class="checks-grid">
 
@@ -618,10 +626,90 @@ footer{
         <div class="check-info">
           <div class="check-name">
             Automatic OS updates
-            <span class="tag tag-soc">CC7.1</span>
+            <span class="tag tag-soc">CC6.8</span>
             <span class="tag tag-fix">⚡ auto-fix</span>
           </div>
           <div class="check-desc">Ensures security patches are automatically checked. Required for most compliance frameworks.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🛡</div>
+        <div class="check-info">
+          <div class="check-name">
+            System integrity (SIP)
+            <span class="tag tag-soc">CC6.8</span>
+          </div>
+          <div class="check-desc">Prevents root-level system file modification. Required for Gatekeeper and XProtect to function.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">👤</div>
+        <div class="check-info">
+          <div class="check-name">
+            Local admin rights
+            <span class="tag tag-soc">CC6.3</span>
+          </div>
+          <div class="check-desc">Verifies the current user is not running as a local administrator. Most commonly cited audit finding.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🚫</div>
+        <div class="check-info">
+          <div class="check-name">
+            Guest account
+            <span class="tag tag-soc">CC6.1</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Verifies the guest account is disabled. Guest access bypasses all logical access controls.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">🔑</div>
+        <div class="check-info">
+          <div class="check-name">
+            Automatic login
+            <span class="tag tag-soc">CC6.1</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Verifies auto-login is disabled. Physical access to an auto-login Mac bypasses all authentication.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">📡</div>
+        <div class="check-info">
+          <div class="check-name">
+            Sharing services
+            <span class="tag tag-soc">CC6.6</span>
+          </div>
+          <div class="check-desc">Checks file sharing, screen sharing, remote management, and internet sharing are all off.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">📶</div>
+        <div class="check-info">
+          <div class="check-name">
+            AirDrop
+            <span class="tag tag-soc">CC6.6</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Verifies AirDrop is set to Contacts Only or Off. "Everyone" is a data exfiltration risk.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">📦</div>
+        <div class="check-info">
+          <div class="check-name">
+            OS patch status
+            <span class="tag tag-soc">CC6.8</span>
+          </div>
+          <div class="check-desc">Checks pending update count from cached Software Update prefs — no network call needed.</div>
         </div>
       </div>
 
@@ -669,8 +757,8 @@ footer{
               <div class="rm-brand-sub">Endpoint Security Assessment</div>
             </div>
             <div>
-              <div class="rm-score">8/8</div>
-              <div class="rm-score-sub">8 pass · 0 fail · 0 warn</div>
+              <div class="rm-score">15/15</div>
+              <div class="rm-score-sub">15 pass · 0 fail · 0 warn</div>
             </div>
           </div>
           <div class="rm-meta">
@@ -767,7 +855,7 @@ const lines = [
   { html: '  <span class="c-red">✗</span>  <span class="c-white" style="display:inline-block;width:22ch">Automatic OS updates</span> <span class="c-dim">off</span>  <span class="c-muted" style="font-size:.9em">expected: on</span>' },
   { html: '' },
   { html: '<span class="c-dim">  ' + '─'.repeat(49) + '</span>' },
-  { html: '  <span class="c-bold-red">Score: 6/8</span>  <span class="c-muted">(6 pass, 2 fail, 1 warn)</span>' },
+  { html: '  <span class="c-bold-red">Score: 12/15</span>  <span class="c-muted">(12 pass, 2 fail, 1 warn)</span>' },
   { html: '' },
   { html: '<span class="c-dim">  Run fort --fix to remediate fixable issues.</span>' },
 ];
@@ -797,7 +885,7 @@ observer.observe(document.querySelector('.hero'));
 
 // ── Install tabs ─────────────────────────────────────────────
 function switchTab(id, btn) {
-  ['brew','go'].forEach(t => {
+  ['curl','go'].forEach(t => {
     document.getElementById('install-'+t).style.display = t===id ? 'flex' : 'none';
     document.getElementById('install-note-'+t).style.display = t===id ? 'block' : 'none';
   });
@@ -818,6 +906,8 @@ function copyCmd(btn, text) {
 }
 
 // ── Waitlist form ────────────────────────────────────────────
+// Using Formspree (free tier, 50 submissions/month).
+// Setup: formspree.io → New Form → copy the form ID → replace YOUR_FORM_ID below.
 async function submitWaitlist(e) {
   e.preventDefault();
   const email = document.getElementById('wl-email').value;
@@ -826,14 +916,15 @@ async function submitWaitlist(e) {
   btn.disabled = true;
 
   try {
-    const res = await fetch('/api/waitlist', {
+    const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ email }),
     });
     if (!res.ok) throw new Error('failed');
     document.getElementById('wl-form').style.display = 'none';
     document.getElementById('wl-success').style.display = 'block';
+    if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { email });
   } catch {
     btn.textContent = 'Try again';
     btn.disabled = false;
