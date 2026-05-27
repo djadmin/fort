@@ -28,9 +28,6 @@ func main() {
 		Long:         "fort — audit, fix, and prove endpoint security. One command.",
 		Version:      version,
 		SilenceUsage: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(jsonOutput, fix, dryRun, report)
-		},
 	}
 
 	root.Flags().BoolVar(&jsonOutput, "json", false, "output structured JSON")
@@ -38,20 +35,30 @@ func main() {
 	root.Flags().BoolVar(&dryRun, "dry-run", false, "show what --fix would change without applying it")
 	root.Flags().BoolVar(&report, "report", false, "write an HTML evidence report (fort-report.html)")
 
+	var exitCode int
+	root.RunE = func(cmd *cobra.Command, args []string) error {
+		code, err := run(jsonOutput, fix, dryRun, report)
+		exitCode = code
+		return err
+	}
+
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}
+	os.Exit(exitCode)
 }
 
-func run(jsonOutput, fix, dryRun, report bool) error {
+// run returns (exitCode, error).
+// exitCode: 0 = all pass, 1 = any fail, 2 = any warn and no fail.
+// dry-run always returns 0 — it is purely informational.
+func run(jsonOutput, fix, dryRun, report bool) (int, error) {
 	allChecks := checks.All()
 	if len(allChecks) == 0 {
-		return fmt.Errorf("no checks available for this platform")
+		return 1, fmt.Errorf("no checks available for this platform")
 	}
 
-	// Dry-run: show what --fix would change, then exit
 	if dryRun {
-		return runDryRun(allChecks)
+		return 0, runDryRun(allChecks)
 	}
 
 	results := make([]checks.Result, 0, len(allChecks))
@@ -72,21 +79,28 @@ func run(jsonOutput, fix, dryRun, report bool) error {
 
 	if jsonOutput {
 		printJSON(results, h, serial, osVer)
-		return nil
+	} else {
+		printHuman(results, h, osVer)
 	}
-
-	printHuman(results, h, osVer)
 
 	if report {
 		ts := time.Now().Format("2006-01-02")
 		outPath := fmt.Sprintf("fort-report-%s.html", ts)
 		if err := writeReport(results, h, serial, osVer, outPath); err != nil {
-			return fmt.Errorf("report: %w", err)
+			return 1, fmt.Errorf("report: %w", err)
 		}
 		fmt.Printf("  Report written to %s\n\n", outPath)
 	}
 
-	return nil
+	_, fail, warn := tally(results)
+	switch {
+	case fail > 0:
+		return 1, nil
+	case warn > 0:
+		return 2, nil
+	default:
+		return 0, nil
+	}
 }
 
 func runDryRun(allChecks []checks.Check) error {
