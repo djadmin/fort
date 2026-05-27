@@ -2,16 +2,11 @@
 
 **Audit, fix, and prove macOS endpoint security from one command.**
 
-[![CI](https://github.com/djadmin/fort/actions/workflows/ci.yml/badge.svg)](https://github.com/djadmin/fort/actions)
-[![Release](https://img.shields.io/github/v/release/djadmin/fort)](https://github.com/djadmin/fort/releases)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
+`fort` is a macOS CLI for teams that need fast, auditable endpoint checks without standing up MDM first. It inspects local security settings, can remediate the fixable ones, and can emit both machine-readable JSON and an auditor-friendly HTML report.
 
-`fort` checks your Mac's security settings, fixes the ones it can, and produces an auditor-ready HTML report — no MDM, no agent, no signup. Built for startups preparing for SOC 2, consultants doing client readiness reviews, and BYOD teams that need evidence without full device enrollment.
+Built for startups preparing for SOC 2, consultants running client readiness reviews, and BYOD environments that need evidence without full device enrollment.
 
-**[djadmin.github.io/fort](https://djadmin.github.io/fort)**
-
-```
+```text
 $ fort
 
   fort v0.1.0  —  alice-mbp (macOS 15.5)
@@ -20,66 +15,64 @@ $ fort
   ✓  Password manager         1Password
   ✓  Disk encryption          on
   ✗  Screen lock              off                         expected: immediate
-  ~  Antivirus / EDR          XProtect only (built-in)   expected: third-party AV/EDR
+  ~  Antivirus / EDR          XProtect only              expected: third-party AV/EDR
   ✓  Application firewall     on
   ✓  Gatekeeper               enabled
-  ✓  System integrity (SIP)   enabled
   ✓  Remote login (SSH)       off
-  ✗  Local admin rights       admin                      expected: standard user
-  ✓  Guest account            disabled
-  ✓  Automatic login          disabled
-  ✓  Sharing services         all off
-  ✓  AirDrop                  Off
-  ✗  Automatic OS updates     off                        expected: on
-  ✓  OS patch status          15.5
+  ...
 
   ───────────────────────────────────────────────────────────────────
-  Score: 11/15  (11 pass, 3 fail, 1 warn)
+  Score: 11/15  (11 pass, 2 fail, 2 warn)
 
-  Run fort --fix to remediate fixable issues.
+  Run fort --dry-run to preview fixes, or fort --fix to apply with confirmation.
 ```
+
+## Status
+
+- macOS 12+ today
+- Single local binary, no agent, no signup
+- 15 built-in checks mapped to SOC 2, ISO 27001, NIST CSF, and CIS v8
 
 ## Install
 
 ```bash
-# macOS (Apple Silicon + Intel)
-curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/
-
-# Go
 go install github.com/djadmin/fort/cmd/fort@latest
 ```
+
+Pre-built binaries and a Homebrew tap are coming with the first tagged release.
 
 ## Usage
 
 ```bash
 fort                # audit your Mac
-fort --fix          # audit + auto-remediate fixable issues
-fort --dry-run      # show exactly what --fix would change, without applying it
+fort --dry-run      # preview what --fix would change — nothing is applied
+fort --fix          # audit, show a confirmation prompt, then apply fixes
+fort --fix --yes    # skip the prompt — for scripts, MDM push, or cron
 fort --json         # structured JSON output for scripts and dashboards
-fort --report       # write fort-report-YYYY-MM-DD.html (auditor-ready, print to PDF)
+fort --report       # write fort-report-YYYY-MM-DD.html (print to PDF)
 ```
+
+`--dry-run` shows the exact command each fix would run before anything touches your system. `--fix` always asks `[y/N]` by default — use `--yes` to skip in automated contexts.
 
 Exit codes: `0` all pass · `1` any fail · `2` any warn
 
 ## What It Checks
 
-15 macOS checks across five groups, each mapped to SOC 2, ISO 27001, NIST CSF, and CIS v8:
+`fort` currently ships 15 macOS checks across five groups:
 
-| Group | Checks |
-|-------|--------|
+| Area | Checks |
+|------|--------|
 | Core security | password manager, FileVault, screen lock, antivirus / EDR |
 | System hardening | firewall, Gatekeeper, SIP, SSH |
 | Access controls | local admin rights, guest account, automatic login |
 | Exposure reduction | sharing services, AirDrop |
-| Patching | automatic OS updates, OS patch status |
+| Patching | automatic OS updates, pending OS updates |
 
-## Evidence report
+Each result includes framework mappings in both JSON and HTML report output.
 
-`fort --report` writes a self-contained HTML file — machine identity, serial, OS version, timestamp, per-check results, and framework control references (SOC 2 CC6.x / CC7.x, ISO 27001 A.8.x, NIST CSF, CIS v8). Open in any browser and print to PDF. No server, no upload.
+## Outputs
 
-## JSON output
-
-`fort --json` emits a stable payload for automation:
+`fort --json` produces a stable JSON payload designed for scripts, collectors, and dashboards:
 
 ```json
 {
@@ -89,42 +82,42 @@ Exit codes: `0` all pass · `1` any fail · `2` any warn
   "serial": "C02X...",
   "os_version": "15.5",
   "timestamp": "2026-05-21T10:30:00Z",
-  "summary": { "total": 15, "pass": 11, "fail": 3, "warn": 1, "score": "11/15" },
-  "policies": [
-    {
-      "id": "filevault",
-      "name": "Disk encryption",
-      "status": "pass",
-      "current": "on",
-      "expected": "on",
-      "fixable": false,
-      "fixed": false,
-      "frameworks": { "SOC 2": ["CC6.1", "CC6.7"], "ISO 27001": ["A.8.3", "A.8.24"], ... }
-    }
-  ]
+  "summary": { "total": 15, "pass": 11, "fail": 2, "warn": 2, "score": "11/15" },
+  "policies": [...]
 }
 ```
 
-## When to use fort
+`fort --report` writes a self-contained HTML evidence report with machine identity, timestamp, per-check status, fix markers, and framework references. The file has no server dependency and can be opened locally or printed to PDF.
 
-fort is not an MDM replacement. It is useful when you need to:
+## Positioning
 
-- understand a Mac's current security posture quickly
-- remediate obvious gaps before an audit or client review
-- produce timestamped evidence without enrolling devices in a SaaS platform
+`fort` is not an MDM replacement. It is the fast path to:
 
-For full MDM (remote wipe, app deployment, profile management), use Jamf, Kandji, or Intune.
+- understand a Mac's current security posture
+- remediate obvious gaps
+- produce evidence an auditor or client can review
+
+Compared with larger tools, the value is speed, transparency, and a workflow that starts with one command instead of enrollment and SaaS setup.
+
+## Repository Layout
+
+| Path | Purpose |
+|------|---------|
+| `cmd/fort` | CLI entrypoint, output, and report generation |
+| `internal/checks` | macOS checks and framework mappings |
+| `cmd/landing` | optional landing-page waitlist server |
+| `landing` | static marketing site assets |
 
 ## Contributing
 
-PRs are welcome. To add a check:
+PRs are welcome.
 
-1. Create `internal/checks/yourcheck_darwin.go` — implement the `Check` interface
-2. Register it in `internal/checks/registry_darwin.go`
-3. Add framework mappings in `internal/checks/frameworks.go`
-4. Run `go test ./...` — existing tests enforce interface contracts
+1. Add a new check under `internal/checks`.
+2. Register it in `internal/checks/registry_darwin.go`.
+3. Add framework mappings in `internal/checks/frameworks.go`.
+4. Run `go test ./...`.
 
-New checks should use documented macOS APIs, work on macOS 12+, and have clear pass/fail criteria.
+New checks should use documented macOS interfaces, work on supported macOS versions, and have clear pass/fail semantics.
 
 ## License
 
