@@ -1,45 +1,24 @@
 # fort
 
-**Audit, fix, and prove macOS endpoint security from one command.**
+**Know your Mac's security posture. Fix gaps. Prove compliance. One command.**
 
-`fort` is a macOS CLI for teams that need fast, auditable endpoint checks without standing up MDM first. It inspects local security settings, can remediate the fixable ones, and can emit both machine-readable JSON and an auditor-friendly HTML report.
+`fort` runs 15 security checks on your Mac, remediates what it can, and produces an auditor-ready report. No agent, no signup, no MDM enrollment — just a single binary.
 
-Built for startups preparing for SOC 2, consultants running client readiness reviews, and BYOD environments that need evidence without full device enrollment.
+Good for anyone who wants to harden their Mac. Essential for teams preparing for SOC 2 or ISO 27001.
 
 **[djadmin.github.io/fort](https://djadmin.github.io/fort)**
 
-<img src="docs/fort-audit.png" width="600" alt="fort — 15 security checks, score 11/15">
-
-<img src="docs/fort-fix.png" width="600" alt="fort --fix — interactive prompt, selective apply, score after fixes">
-
-```text
-$ fort
-
-  fort v0.1.0  —  alice-mbp (macOS 15.5)
-  ───────────────────────────────────────────────────────────────────
-
-  ✓  Password manager         1Password
-  ✓  Disk encryption          on
-  ✗  Screen lock              off                         expected: immediate
-  ~  Antivirus / EDR          XProtect only              expected: third-party AV/EDR
-  ✓  Application firewall     on
-  ✓  Gatekeeper               enabled
-  ✓  Remote login (SSH)       off
-  ...
-
-  ───────────────────────────────────────────────────────────────────
-  Score: 11/15  (11 pass, 2 fail, 2 warn)
-
-  Run fort --dry-run to preview fixes, or fort --fix to apply with confirmation.
-```
-
-## Status
-
-- macOS 12+ today
-- Single local binary, no agent, no signup
-- 15 built-in checks mapped to SOC 2, ISO 27001, NIST CSF, and CIS v8
+<table><tr>
+<td><img src="docs/fort-audit.jpg" alt="fort — 15 security checks"></td>
+<td><img src="docs/fort-fix.jpg" alt="fort --fix — interactive prompt"></td>
+</tr></table>
 
 ## Install
+
+[![CI](https://github.com/djadmin/fort/actions/workflows/ci.yml/badge.svg)](https://github.com/djadmin/fort/actions)
+[![Release](https://img.shields.io/github/v/release/djadmin/fort)](https://github.com/djadmin/fort/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
 
 **Download (macOS — Apple Silicon + Intel)**
 ```bash
@@ -64,78 +43,48 @@ Homebrew tap coming soon: `brew install djadmin/tap/fort`
 ```bash
 fort                # audit your Mac
 fort --dry-run      # preview what --fix would change — nothing is applied
-fort --fix          # audit, show a confirmation prompt, then apply fixes
-fort --fix --yes    # skip the prompt — for scripts, MDM push, or cron
-fort --json         # structured JSON output for scripts and dashboards
+fort --fix          # audit, show confirmation prompt, apply selected fixes
+fort --fix --yes    # skip prompt — for scripts, MDM push, or cron
+fort --json         # structured JSON output for automation
 fort --report       # write fort-report-YYYY-MM-DD.html (print to PDF)
 ```
-
-`--dry-run` shows the exact command each fix would run before anything touches your system. `--fix` always asks `[y/N]` by default — use `--yes` to skip in automated contexts.
 
 Exit codes: `0` all pass · `1` any fail · `2` any warn
 
 ## What It Checks
 
-`fort` currently ships 15 macOS checks across five groups:
+15 macOS checks across five groups, each mapped to SOC 2, ISO 27001, NIST CSF, and CIS v8:
 
-| Area | Checks |
-|------|--------|
+| Group | Checks |
+|-------|--------|
 | Core security | password manager, FileVault, screen lock, antivirus / EDR |
 | System hardening | firewall, Gatekeeper, SIP, SSH |
 | Access controls | local admin rights, guest account, automatic login |
 | Exposure reduction | sharing services, AirDrop |
-| Patching | automatic OS updates, pending OS updates |
+| Patching | automatic OS updates, OS patch status |
 
-Each result includes framework mappings in both JSON and HTML report output.
-
-## Outputs
-
-`fort --json` produces a stable JSON payload designed for scripts, collectors, and dashboards:
+## JSON output
 
 ```json
 {
-  "tool": "fort",
-  "version": "0.1.0",
-  "hostname": "alice-mbp",
-  "serial": "C02X...",
-  "os_version": "15.5",
-  "timestamp": "2026-05-21T10:30:00Z",
+  "tool": "fort", "version": "0.1.1", "hostname": "alice-mbp",
+  "os_version": "15.5", "timestamp": "2026-05-28T10:00:00Z",
   "summary": { "total": 15, "pass": 11, "fail": 2, "warn": 2, "score": "11/15" },
-  "policies": [...]
+  "policies": [{ "id": "filevault", "status": "pass", "current": "on",
+    "frameworks": { "SOC 2": ["CC6.1", "CC6.7"], "ISO 27001": ["A.8.3"] } }]
 }
 ```
 
-`fort --report` writes a self-contained HTML evidence report with machine identity, timestamp, per-check status, fix markers, and framework references. The file has no server dependency and can be opened locally or printed to PDF.
-
-## Positioning
-
-`fort` is not an MDM replacement. It is the fast path to:
-
-- understand a Mac's current security posture
-- remediate obvious gaps
-- produce evidence an auditor or client can review
-
-Compared with larger tools, the value is speed, transparency, and a workflow that starts with one command instead of enrollment and SaaS setup.
-
-## Repository Layout
-
-| Path | Purpose |
-|------|---------|
-| `cmd/fort` | CLI entrypoint, output, and report generation |
-| `internal/checks` | macOS checks and framework mappings |
-| `cmd/landing` | optional landing-page waitlist server |
-| `landing` | static marketing site assets |
+`fort --report` writes a self-contained HTML evidence report — machine identity, timestamp, per-check results, and framework references. Opens locally or prints to PDF.
 
 ## Contributing
 
-PRs are welcome.
+PRs welcome. To add a check:
 
-1. Add a new check under `internal/checks`.
-2. Register it in `internal/checks/registry_darwin.go`.
-3. Add framework mappings in `internal/checks/frameworks.go`.
-4. Run `go test ./...`.
-
-New checks should use documented macOS interfaces, work on supported macOS versions, and have clear pass/fail semantics.
+1. Create `internal/checks/yourcheck_darwin.go` — implement the `Check` interface
+2. Register in `internal/checks/registry_darwin.go`
+3. Add framework mappings in `internal/checks/frameworks.go`
+4. `go test ./...` — existing tests enforce interface contracts
 
 ## License
 
