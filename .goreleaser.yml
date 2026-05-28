@@ -34,17 +34,17 @@ checksum:
   name_template: checksums.txt
   algorithm: sha256
 
-# brews:
-#   - name: fort
-#     repository:
-#       owner: djadmin
-#       name: homebrew-tap
-#       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-#     homepage: https://github.com/djadmin/fort
-#     description: One command. Every Mac. SOC 2 ready.
-#     license: MIT
-#     install: bin.install "fort"
-#     test: system "#{bin}/fort", "--version"
+brews:
+  - name: fort
+    repository:
+      owner: djadmin
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/djadmin/fort
+    description: One command. Every Mac. SOC 2 ready.
+    license: MIT
+    install: bin.install "fort"
+    test: system "#{bin}/fort", "--version"
 
 release:
   github:

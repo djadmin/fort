@@ -6,8 +6,14 @@
 <title>fort — One command. Every Mac. SOC 2 ready.</title>
 <meta name="description" content="fort audits your Mac's security settings, fixes what it finds, and generates a compliance report. No MDM. No signup. No agent.">
 <meta property="og:title" content="fort — One command. Every Mac. SOC 2 ready.">
-<meta property="og:description" content="Audit, remediate, and prove endpoint security in seconds.">
+<meta property="og:description" content="Audit, fix, and prove macOS endpoint security from one command. 15 checks, auto-fix, compliance reports. Free + open source.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://djadmin.github.io/fort">
+<meta property="og:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/fort-audit.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="fort — One command. Every Mac. SOC 2 ready.">
+<meta name="twitter:description" content="Audit, fix, and prove macOS endpoint security from one command. 15 checks, auto-fix, compliance reports. Free + open source.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/fort-audit.jpg">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -474,10 +480,17 @@ footer{
 
   <div class="install-wrap">
     <div class="install-tabs">
-      <button class="itab active" onclick="switchTab('curl',this)">macOS</button>
+      <button class="itab active" onclick="switchTab('brew',this)">Homebrew</button>
+      <button class="itab" onclick="switchTab('curl',this)">Direct</button>
       <button class="itab" onclick="switchTab('go',this)">Go</button>
     </div>
-    <div class="install-cmd" id="install-curl">
+    <div class="install-cmd" id="install-brew">
+      <span>brew install djadmin/tap/fort</span>
+      <button class="copy-btn" onclick="copyCmd(this,'brew install djadmin/tap/fort')" title="Copy">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="install-cmd" id="install-curl" style="display:none">
       <span>curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/</span>
       <button class="copy-btn" onclick="copyCmd(this,'curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/')" title="Copy">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
@@ -489,7 +502,8 @@ footer{
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8" stroke-linecap="round"/></svg>
       </button>
     </div>
-    <span class="install-note" id="install-note-curl">Apple Silicon &amp; Intel · no prerequisites</span>
+    <span class="install-note" id="install-note-brew">Requires <a href="https://brew.sh" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Homebrew</a></span>
+    <span class="install-note" id="install-note-curl" style="display:none">Apple Silicon &amp; Intel · no prerequisites</span>
     <span class="install-note" id="install-note-go" style="display:none">Requires <a href="https://go.dev" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Go 1.21+</a></span>
   </div>
 
@@ -884,7 +898,7 @@ observer.observe(document.querySelector('.hero'));
 
 // ── Install tabs ─────────────────────────────────────────────
 function switchTab(id, btn) {
-  ['curl','go'].forEach(t => {
+  ['brew','curl','go'].forEach(t => {
     document.getElementById('install-'+t).style.display = t===id ? 'flex' : 'none';
     document.getElementById('install-note-'+t).style.display = t===id ? 'block' : 'none';
   });
