@@ -20,7 +20,12 @@ Good for anyone who wants to harden their Mac. Essential for teams preparing for
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
 
-**Download (macOS — Apple Silicon + Intel)**
+**Homebrew** _(recommended)_
+```bash
+brew install djadmin/tap/fort
+```
+
+**Direct download (macOS — Apple Silicon + Intel)**
 ```bash
 curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/
 ```
@@ -36,7 +41,10 @@ git clone https://github.com/djadmin/fort.git
 cd fort && make install
 ```
 
-Homebrew tap coming soon: `brew install djadmin/tap/fort`
+**Update**
+```bash
+brew upgrade djadmin/tap/fort
+```
 
 ## Usage
 
