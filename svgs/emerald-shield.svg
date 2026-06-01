@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#052e16"/>
+      <stop offset="50%" stop-color="#0a3d1f"/>
+      <stop offset="100%" stop-color="#021a0b"/>
+    </linearGradient>
+    <linearGradient id="shield5" x1="256" y1="50" x2="256" y2="470">
+      <stop offset="0%" stop-color="#6ee7b7"/>
+      <stop offset="40%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="shieldIn5" x1="256" y1="90" x2="256" y2="430">
+      <stop offset="0%" stop-color="#0a3d1f"/>
+      <stop offset="100%" stop-color="#021a0b"/>
+    </linearGradient>
+    <filter id="shadow5">
+      <feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  <path d="M256 56L80 146v140c0 98 74 162 176 186 102-24 176-88 176-186V146L256 56z" fill="url(#shield5)" filter="url(#shadow5)"/>
+  <path d="M256 86L104 164v126c0 84 64 140 152 162 88-22 152-78 152-162V164L256 86z" fill="url(#shieldIn5)"/>
+  <text x="170" y="310" font-family="JetBrains Mono, monospace" font-size="120" font-weight="700" fill="#6ee7b7" opacity="0.9">❯</text>
+  <rect x="290" y="240" width="16" height="70" rx="4" fill="#6ee7b7" opacity="0.7"/>
+  <line x1="130" y1="360" x2="382" y2="360" stroke="#6ee7b7" stroke-width="1.5" opacity="0.15"/>
+</svg>

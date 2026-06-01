@@ -1,5 +1,34 @@
 # fort
 
+<!-- LOGO-PICKS-START — temporary; remove once chosen -->
+## Logo picks (temporary)
+
+<table>
+<tr>
+<td align="center" width="33%"><img src="svgs/obsidian-tower.svg" width="200" alt="obsidian-tower"><br><sub><b>obsidian-tower</b></sub></td>
+<td align="center" width="33%"><img src="svgs/glowing-turret.svg" width="200" alt="glowing-turret"><br><sub><b>glowing-turret</b></sub></td>
+<td align="center" width="33%"><img src="svgs/emerald-shield.svg" width="200" alt="emerald-shield"><br><sub><b>emerald-shield</b></sub></td>
+</tr>
+<tr>
+<td align="center"><img src="svgs/fortress-shield.svg" width="200" alt="fortress-shield"><br><sub><b>fortress-shield</b></sub></td>
+<td align="center"><img src="svgs/neon-fort.svg" width="200" alt="neon-fort"><br><sub><b>neon-fort</b></sub></td>
+<td align="center"><img src="svgs/lock-emblem.svg" width="200" alt="lock-emblem"><br><sub><b>lock-emblem</b></sub></td>
+</tr>
+</table>
+
+Favicon-size sanity check (16px — the real survival test):
+
+<p>
+  <img src="svgs/obsidian-tower.svg" width="16"> obsidian-tower &nbsp;
+  <img src="svgs/glowing-turret.svg" width="16"> glowing-turret &nbsp;
+  <img src="svgs/emerald-shield.svg" width="16"> emerald-shield &nbsp;
+  <img src="svgs/fortress-shield.svg" width="16"> fortress-shield &nbsp;
+  <img src="svgs/neon-fort.svg" width="16"> neon-fort &nbsp;
+  <img src="svgs/lock-emblem.svg" width="16"> lock-emblem
+</p>
+
+<!-- LOGO-PICKS-END -->
+
 **Know your Mac's security posture. Fix gaps. Prove compliance. One command.**
 
 `fort` runs 15 security checks on your Mac, remediates what it can, and produces an auditor-ready report. No agent, no signup, no MDM enrollment — just a single binary.

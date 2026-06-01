@@ -1,0 +1,48 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#1a1040"/>
+      <stop offset="50%" stop-color="#2d1b69"/>
+      <stop offset="100%" stop-color="#0f0a2a"/>
+    </linearGradient>
+    <linearGradient id="shield1" x1="256" y1="60" x2="256" y2="460">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="40%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+    <linearGradient id="shieldInner" x1="256" y1="100" x2="256" y2="420">
+      <stop offset="0%" stop-color="#2d1b69"/>
+      <stop offset="100%" stop-color="#1a0f3c"/>
+    </linearGradient>
+    <linearGradient id="tower1" x1="256" y1="120" x2="256" y2="360">
+      <stop offset="0%" stop-color="#c4b5fd"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="shadow1">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <path d="M256 72L100 152v120c0 90 66 148 156 172 90-24 156-82 156-172V152L256 72z" fill="url(#shield1)" filter="url(#shadow1)"/>
+  <path d="M256 96L120 166v112c0 78 58 130 136 152 78-22 136-74 136-152V166L256 96z" fill="url(#shieldInner)"/>
+  <rect x="220" y="170" width="72" height="140" rx="4" fill="url(#tower1)" filter="url(#glow1)"/>
+  <rect x="216" y="152" width="18" height="24" rx="3" fill="url(#tower1)"/>
+  <rect x="242" y="145" width="18" height="31" rx="3" fill="url(#tower1)"/>
+  <rect x="268" y="152" width="18" height="24" rx="3" fill="url(#tower1)"/>
+  <rect x="164" y="210" width="48" height="100" rx="4" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="300" y="210" width="48" height="100" rx="4" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="160" y="196" width="14" height="20" rx="2" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="180" y="196" width="14" height="20" rx="2" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="200" y="196" width="14" height="20" rx="2" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="298" y="196" width="14" height="20" rx="2" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="318" y="196" width="14" height="20" rx="2" fill="url(#tower1)" opacity="0.7"/>
+  <rect x="338" y="196" width="14" height="20" rx="2" fill="url(#tower1)" opacity="0.7"/>
+  <path d="M236 310V260a20 20 0 0140 0v50" fill="#1a0f3c"/>
+  <rect x="148" y="300" width="216" height="20" rx="4" fill="url(#tower1)" opacity="0.5"/>
+  <circle cx="256" cy="250" r="60" fill="#a78bfa" opacity="0.06"/>
+  <path d="M220 380l22 24 50-56" stroke="#a78bfa" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+</svg>
