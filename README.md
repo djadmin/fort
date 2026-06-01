@@ -1,4 +1,4 @@
-<h1><img src="svgs/lock-emblem.svg" width="36" height="36" alt="" align="top"> fort</h1>
+<h1><img src="svgs/glowing-turret.svg" width="36" height="36" alt="" align="top"> fort</h1>
 
 **Know your Mac's security posture. Fix gaps. Prove compliance. One command.**
 
