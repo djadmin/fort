@@ -1,6 +1,9 @@
-<h1><img src="svgs/glowing-turret.svg" width="36" height="36" alt="" align="top"> fort</h1>
+<p align="center">
+  <img src="svgs/glowing-turret-transparent.svg" width="80" alt="fort">
+  <h1 align="center">fort</h1>
+</p>
 
-**Know your Mac's security posture. Fix gaps. Prove compliance. One command.**
+<p align="center"><strong>Know your Mac's security posture. Fix gaps. Prove compliance. One command.</strong></p>
 
 `fort` runs 15 security checks on your Mac, remediates what it can, and produces an auditor-ready report. No agent, no signup, no MDM enrollment — just a single binary.
 

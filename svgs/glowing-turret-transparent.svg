@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="turret" x1="256" y1="80" x2="256" y2="420">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="40%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="shadow2">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect x="170" y="200" width="172" height="210" rx="8" fill="url(#turret)" filter="url(#shadow2)"/>
+  <rect x="162" y="160" width="36" height="50" rx="5" fill="url(#turret)"/>
+  <rect x="210" y="148" width="36" height="62" rx="5" fill="url(#turret)"/>
+  <rect x="258" y="148" width="36" height="62" rx="5" fill="url(#turret)"/>
+  <rect x="306" y="160" width="36" height="50" rx="5" fill="url(#turret)"/>
+  <path d="M222 410V310a34 34 0 0168 0v100" fill="#0c1a2e"/>
+  <rect x="190" y="240" width="10" height="28" rx="5" fill="#0c1a2e" opacity="0.5"/>
+  <rect x="312" y="240" width="10" height="28" rx="5" fill="#0c1a2e" opacity="0.5"/>
+  <path d="M222 410V310a34 34 0 0168 0v100" stroke="#38bdf8" stroke-width="1" opacity="0.3"/>
+  <line x1="170" y1="200" x2="342" y2="200" stroke="#7dd3fc" stroke-width="2" opacity="0.5"/>
+</svg>
