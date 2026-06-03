@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Assessment · macbook-pro-demo</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --page:#F5F5F4;
+  --surface:#FFFFFF;
+  --ink:#1C1917;
+  --ink-2:#44403C;
+  --ink-3:#78716C;
+  --ink-4:#A8A29E;
+  --border:#E7E5E4;
+  --border-2:#F5F5F4;
+  --hd-bg:#0C0F1C;
+  --hd-bg-2:#131829;
+  --meta-bg:#101422;
+  --meta-border:#1C2235;
+  --pass:#166534;--pass-bg:#F0FDF4;--pass-bd:#BBF7D0;
+  --fail:#991B1B;--fail-bg:#FEF2F2;--fail-bd:#FECACA;
+  --warn:#92400E;--warn-bg:#FFFBEB;--warn-bd:#FDE68A;
+  --radius:12px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Monaco,Consolas,monospace;
+}
+body{font-family:var(--font);background:var(--page);color:var(--ink);font-size:13px;line-height:1.6;padding:2rem 1rem;-webkit-font-smoothing:antialiased}
+.doc{max-width:860px;margin:0 auto}
+a{color:inherit;text-decoration:none}
+
+ 
+.hd{
+  background:linear-gradient(140deg,var(--hd-bg) 0%,var(--hd-bg-2) 100%);
+  border-radius:var(--radius) var(--radius) 0 0;
+  padding:1.75rem 2rem;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:1.5rem;
+}
+.brand{font-size:1.25rem;font-weight:800;color:#FFF;letter-spacing:-.035em;line-height:1}
+.brand-sub{font-size:.6875rem;color:#4B5574;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
+
+.score-group{display:flex;align-items:center;gap:1rem;flex-shrink:0}
+.ring-wrap{position:relative;width:52px;height:52px}
+.ring-wrap svg{transform:rotate(-90deg);display:block}
+.ring-track{fill:none;stroke:#1C2444;stroke-width:4}
+.ring-arc{fill:none;stroke-width:4;stroke-linecap:round}
+.ring-label{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--font);
+}
+.ring-frac{font-size:.625rem;font-weight:700;color:#FFF;line-height:1}
+.ring-unit{font-size:.4375rem;color:#4B5574;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
+.score-text{}
+.score-pct{font-size:2.125rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#4B5574;margin-top:.2rem}
+
+ 
+.meta{
+  background:var(--meta-bg);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--meta-border);
+}
+.mc{padding:.625rem 1.625rem;border-right:1px solid var(--meta-border)}
+.mc:last-child{border-right:none}
+.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#394361;margin-bottom:.15rem}
+.mv{font-size:.8125rem;font-weight:500;color:#B8BFCD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+ 
+.stats{
+  background:var(--surface);
+  display:flex;
+  border-bottom:1px solid var(--border);
+}
+.sv{
+  flex:1;padding:.9rem 1.625rem;
+  border-right:1px solid var(--border-2);
+  display:flex;align-items:baseline;gap:.5rem;
+}
+.sv:last-child{border-right:none}
+.sn{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.sn.p{color:var(--pass)}.sn.f{color:var(--fail)}.sn.w{color:var(--warn)}
+.sl{font-size:.8125rem;color:var(--ink-3)}
+
+ 
+.card{background:var(--surface)}
+.section-head{
+  padding:.5rem 1.625rem;
+  font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--ink-4);background:#FAFAF9;
+  border-bottom:1px solid var(--border);
+  border-top:1px solid var(--border);
+}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:.5rem 1.625rem;
+  text-align:left;
+  font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--ink-4);background:#FAFAF9;
+  border-bottom:1px solid var(--border);
+}
+tbody tr{border-bottom:1px solid var(--border-2)}
+tbody tr:last-child{border-bottom:none}
+td{padding:.7rem 1.625rem;vertical-align:middle}
+
+ 
+.accent-td{width:3px;padding:0!important}
+tr.row-pass .accent-td{background:transparent}
+tr.row-fail .accent-td{background:var(--fail-bd)}
+tr.row-warn .accent-td{background:var(--warn-bd)}
+tr.row-fail{background:#FFFCFC}
+tr.row-warn{background:#FFFDF7}
+
+.cn{font-size:.875rem;font-weight:600;color:var(--ink);line-height:1.3}
+.soc2-hint{font-size:.625rem;color:var(--ink-4);font-family:var(--mono);margin-top:.2rem;letter-spacing:.01em}
+
+ 
+.pill{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.2rem .6rem;border-radius:999px;
+  font-size:.625rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  white-space:nowrap;
+}
+.pill-icon{font-size:.6rem;line-height:1}
+.pill.pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-bd)}
+.pill.fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-bd)}
+.pill.warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)}
+
+.fixed-chip{
+  display:inline-flex;align-items:center;gap:.2rem;
+  margin-left:.375rem;padding:.175rem .4rem;border-radius:999px;
+  font-size:.5625rem;font-weight:700;
+  background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;
+}
+
+.val{font-size:.875rem;color:var(--ink-2)}
+.val-muted{color:var(--ink-4)}
+.arrow{color:var(--ink-4);margin:0 .3rem;font-size:.8125rem}
+.req{font-size:.875rem;color:var(--fail);font-weight:500}
+.req-warn{color:var(--warn)}
+
+ 
+.fw-ref{}
+.fw-table{font-size:.6875rem}
+.fw-table thead th{font-size:.5rem;padding:.4rem 1rem}
+.fw-table td{padding:.35rem 1rem;border-bottom:1px solid var(--border-2)}
+.fw-table tbody tr:last-child td{border-bottom:none}
+.fw-dot{width:3px;padding:0!important}
+tr.fw-pass .fw-dot{background:transparent}
+tr.fw-fail .fw-dot{background:var(--fail-bd)}
+tr.fw-warn .fw-dot{background:var(--warn-bd)}
+.fw-name{font-weight:500;color:var(--ink-2);font-size:.75rem}
+.fw-ctrl{font-family:var(--mono);font-size:.625rem;color:var(--ink-3)}
+
+ 
+.footer{
+  margin-top:1.25rem;padding:0 .25rem;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.6875rem;color:var(--ink-4);
+}
+.footer a:hover{color:var(--ink-3)}
+.confidential{
+  font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  background:var(--fail-bg);color:var(--fail);
+  padding:.2rem .55rem;border-radius:3px;border:1px solid var(--fail-bd);
+}
+
+ 
+@media(max-width:640px){
+  .meta{grid-template-columns:repeat(2,1fr)}
+  .hd{flex-direction:column;gap:1rem;align-items:flex-start}
+  .score-group{align-self:flex-end}
+}
+@media print{
+  body{background:#fff;padding:0;font-size:11px}
+  .doc{max-width:100%}
+  .hd,.meta{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .hd{border-radius:0}
+  tr.row-fail,tr.row-warn{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .accent-td,.fw-dot{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+
+<div class="hd">
+  <div>
+    <div class="brand">fort</div>
+    <div class="brand-sub">Endpoint Security Assessment Report</div>
+  </div>
+  <div class="score-group">
+    <div class="score-text">
+      <div class="score-pct s-warn" style="color:#eab308">87<span style="font-size:.45em;font-weight:600;opacity:.45">%</span></div>
+      <div class="score-tag">Compliance</div>
+    </div>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 52 52" width="52" height="52">
+        <circle class="ring-track" cx="26" cy="26" r="21"/>
+        <circle class="ring-arc" cx="26" cy="26" r="21"
+          stroke="#eab308"
+          stroke-dasharray="131.95"
+          stroke-dashoffset="17.59"/>
+      </svg>
+      <div class="ring-label">
+        <span class="ring-frac">13/15</span>
+        <span class="ring-unit">checks</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="meta">
+  <div class="mc"><div class="mk">Machine</div><div class="mv">macbook-pro-demo</div></div>
+  <div class="mc"><div class="mk">macOS</div><div class="mv">15.4.1</div></div>
+  <div class="mc"><div class="mk">Serial</div><div class="mv">C02Y4NKHJGH7</div></div>
+  <div class="mc"><div class="mk">Generated</div><div class="mv">3 Jun 2026, 10:29 UTC</div></div>
+</div>
+
+
+<div class="stats card">
+  <div class="sv"><span class="sn p">13</span><span class="sl">passing</span></div>
+  <div class="sv"><span class="sn f">1</span><span class="sl">failing</span></div>
+  <div class="sv"><span class="sn w">1</span><span class="sl">warnings</span></div>
+</div>
+
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:3px;padding:0"></th>
+        <th style="width:42%">Check</th>
+        <th style="width:12%">Status</th>
+        <th>Finding</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Password manager</div>
+        <div class="soc2-hint">SOC 2 CC6.1</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">Dashlane</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Disk encryption</div>
+        <div class="soc2-hint">SOC 2 CC6.1 · CC6.7</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">on</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Screen lock</div>
+        <div class="soc2-hint">SOC 2 CC6.1</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">5 min</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Antivirus / EDR</div>
+        <div class="soc2-hint">SOC 2 CC6.8 · CC7.1</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">1Password XProtect</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Application firewall</div>
+        <div class="soc2-hint">SOC 2 CC6.6</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">on</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Gatekeeper</div>
+        <div class="soc2-hint">SOC 2 CC6.8</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">enabled</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">System integrity (SIP)</div>
+        <div class="soc2-hint">SOC 2 CC6.8</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">enabled</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Remote login (SSH)</div>
+        <div class="soc2-hint">SOC 2 CC6.6</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">off</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-fail">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Local admin rights</div>
+        <div class="soc2-hint">SOC 2 CC6.3</div>
+      </td>
+      <td>
+        <span class="pill fail">
+          <span class="pill-icon">✗</span> Fail
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">admin</span><span class="arrow">→</span><span class="req">standard user</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Guest account</div>
+        <div class="soc2-hint">SOC 2 CC6.1</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">disabled</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Automatic login</div>
+        <div class="soc2-hint">SOC 2 CC6.1</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">disabled</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Sharing services</div>
+        <div class="soc2-hint">SOC 2 CC6.6</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">all off</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-warn">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">AirDrop</div>
+        <div class="soc2-hint">SOC 2 CC6.6</div>
+      </td>
+      <td>
+        <span class="pill warn">
+          <span class="pill-icon">◐</span> Warn
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">contacts only</span><span class="arrow">→</span><span class="req-warn">off</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Automatic OS updates</div>
+        <div class="soc2-hint">SOC 2 CC6.8</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">on</span>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">OS patch status</div>
+        <div class="soc2-hint">SOC 2 CC6.8</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">15.4</span>
+        
+      </td>
+    </tr>
+    
+    </tbody>
+  </table>
+</div>
+
+
+<div class="card fw-ref" style="margin-top:1rem;border-radius:var(--radius)">
+  <div class="section-head">Framework Control Reference &nbsp;—&nbsp; SOC 2 · ISO 27001 · NIST CSF · CIS v8</div>
+  <table class="fw-table">
+    <thead>
+      <tr>
+        <th style="width:3px;padding:0"></th>
+        <th style="width:26%">Check</th>
+        <th style="width:16%">SOC 2</th>
+        <th style="width:22%">ISO 27001</th>
+        <th style="width:22%">NIST CSF</th>
+        <th style="width:14%">CIS v8</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Password manager</td>
+      <td class="fw-ctrl">CC6.1</td>
+      <td class="fw-ctrl">A.5.17 · A.8.5</td>
+      <td class="fw-ctrl">PR.AC-1 · PR.AC-7</td>
+      <td class="fw-ctrl">5.2 · 5.4</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Disk encryption</td>
+      <td class="fw-ctrl">CC6.1 · CC6.7</td>
+      <td class="fw-ctrl">A.8.3 · A.8.24</td>
+      <td class="fw-ctrl">PR.DS-1 · PR.DS-5</td>
+      <td class="fw-ctrl">3.6 · 3.11</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Screen lock</td>
+      <td class="fw-ctrl">CC6.1</td>
+      <td class="fw-ctrl">A.8.1 · A.8.5</td>
+      <td class="fw-ctrl">PR.AC-3 · PR.AC-7</td>
+      <td class="fw-ctrl">4.3</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Antivirus / EDR</td>
+      <td class="fw-ctrl">CC6.8 · CC7.1</td>
+      <td class="fw-ctrl">A.8.7</td>
+      <td class="fw-ctrl">DE.CM-4 · PR.PT-3</td>
+      <td class="fw-ctrl">10.1 · 10.2</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Application firewall</td>
+      <td class="fw-ctrl">CC6.6</td>
+      <td class="fw-ctrl">A.8.20 · A.8.22</td>
+      <td class="fw-ctrl">PR.AC-5 · DE.CM-1</td>
+      <td class="fw-ctrl">4.5 · 12.1</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Gatekeeper</td>
+      <td class="fw-ctrl">CC6.8</td>
+      <td class="fw-ctrl">A.8.7 · A.8.19</td>
+      <td class="fw-ctrl">PR.PT-3 · DE.CM-4</td>
+      <td class="fw-ctrl">2.6 · 10.5</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">System integrity (SIP)</td>
+      <td class="fw-ctrl">CC6.8</td>
+      <td class="fw-ctrl">A.8.7 · A.8.9</td>
+      <td class="fw-ctrl">PR.PT-3 · PR.IP-1</td>
+      <td class="fw-ctrl">2.5 · 10.5</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Remote login (SSH)</td>
+      <td class="fw-ctrl">CC6.6</td>
+      <td class="fw-ctrl">A.8.20 · A.8.21</td>
+      <td class="fw-ctrl">PR.AC-5 · PR.AC-3</td>
+      <td class="fw-ctrl">4.8 · 12.1</td>
+    </tr>
+    
+    <tr class="fw-fail">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Local admin rights</td>
+      <td class="fw-ctrl">CC6.3</td>
+      <td class="fw-ctrl">A.5.15 · A.8.2</td>
+      <td class="fw-ctrl">PR.AC-4</td>
+      <td class="fw-ctrl">5.4 · 5.5</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Guest account</td>
+      <td class="fw-ctrl">CC6.1</td>
+      <td class="fw-ctrl">A.5.15 · A.8.5</td>
+      <td class="fw-ctrl">PR.AC-1</td>
+      <td class="fw-ctrl">5.3</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Automatic login</td>
+      <td class="fw-ctrl">CC6.1</td>
+      <td class="fw-ctrl">A.8.5</td>
+      <td class="fw-ctrl">PR.AC-1 · PR.AC-7</td>
+      <td class="fw-ctrl">4.3</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Sharing services</td>
+      <td class="fw-ctrl">CC6.6</td>
+      <td class="fw-ctrl">A.8.20 · A.8.21</td>
+      <td class="fw-ctrl">PR.AC-5 · PR.PT-3</td>
+      <td class="fw-ctrl">4.8 · 12.1</td>
+    </tr>
+    
+    <tr class="fw-warn">
+      <td class="fw-dot"></td>
+      <td class="fw-name">AirDrop</td>
+      <td class="fw-ctrl">CC6.6</td>
+      <td class="fw-ctrl">A.8.20</td>
+      <td class="fw-ctrl">PR.DS-5</td>
+      <td class="fw-ctrl">3.14 · 12.1</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">Automatic OS updates</td>
+      <td class="fw-ctrl">CC6.8</td>
+      <td class="fw-ctrl">A.8.8</td>
+      <td class="fw-ctrl">PR.IP-12 · ID.RA-1</td>
+      <td class="fw-ctrl">7.1 · 7.3</td>
+    </tr>
+    
+    <tr class="fw-pass">
+      <td class="fw-dot"></td>
+      <td class="fw-name">OS patch status</td>
+      <td class="fw-ctrl">CC6.8</td>
+      <td class="fw-ctrl">A.8.8</td>
+      <td class="fw-ctrl">PR.IP-12 · ID.RA-1</td>
+      <td class="fw-ctrl">7.4 · 7.5</td>
+    </tr>
+    
+    </tbody>
+  </table>
+</div>
+
+
+<div class="footer">
+  <span>Generated by <a href="https://github.com/djadmin/fort">fort v0.1.1</a> &nbsp;·&nbsp; 3 Jun 2026, 10:29 UTC</span>
+  <span class="confidential">Confidential</span>
+</div>
+
+</div>
+</body>
+</html>
