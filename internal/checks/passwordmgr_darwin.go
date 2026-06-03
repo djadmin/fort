@@ -38,10 +38,13 @@ func (c *PasswordMgrCheck) Run() Result {
 	}
 	for _, pm := range knownPasswordManagers {
 		for _, dir := range searchPaths {
-			if _, err := os.Stat(filepath.Join(dir, pm.app)); err == nil {
+			path := filepath.Join(dir, pm.app)
+			if _, err := os.Stat(path); err == nil {
+				_, transcript, _ := evidenceCmd("ls", "-d", path)
 				return Result{
 					ID: c.ID(), Name: c.Name(),
 					Status: StatusPass, Current: pm.name, Expected: "installed",
+					Evidence: transcript,
 				}
 			}
 		}
@@ -49,9 +52,10 @@ func (c *PasswordMgrCheck) Run() Result {
 	return Result{
 		ID: c.ID(), Name: c.Name(),
 		Status: StatusFail, Current: "none found", Expected: "installed",
+		Evidence: "# Checked /Applications and ~/Applications — no known password manager found",
 	}
 }
 
-func (c *PasswordMgrCheck) Fixable() bool        { return false }
-func (c *PasswordMgrCheck) Fix() error            { return nil }
+func (c *PasswordMgrCheck) Fixable() bool         { return false }
+func (c *PasswordMgrCheck) Fix() error             { return nil }
 func (c *PasswordMgrCheck) FixDescription() string { return "" }

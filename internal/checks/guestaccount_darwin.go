@@ -15,24 +15,23 @@ func (c *GuestAccountCheck) ID() string   { return "guestaccount" }
 func (c *GuestAccountCheck) Name() string { return "Guest account" }
 
 func (c *GuestAccountCheck) Run() Result {
-	out, err := exec.Command(
+	raw, transcript, err := evidenceCmd(
 		"defaults", "read",
 		"/Library/Preferences/com.apple.loginwindow",
 		"GuestEnabled",
-	).Output()
-
+	)
 	// Key missing or error → guest account is disabled (default)
-	if err != nil || strings.TrimSpace(string(out)) == "0" {
+	if err != nil || strings.TrimSpace(raw) == "0" {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusPass, Current: "disabled", Expected: "disabled",
-			Fixable: true,
+			Fixable: true, Evidence: transcript,
 		}
 	}
 	return Result{
 		ID: c.ID(), Name: c.Name(),
 		Status: StatusFail, Current: "enabled", Expected: "disabled",
-		Fixable: true,
+		Fixable: true, Evidence: transcript,
 	}
 }
 

@@ -14,16 +14,18 @@ func (c *ScreenLockCheck) ID() string   { return "screenlock" }
 func (c *ScreenLockCheck) Name() string { return "Screen lock" }
 
 func (c *ScreenLockCheck) Run() Result {
-	askOut, err1 := exec.Command("defaults", "read", "com.apple.screensaver", "askForPassword").Output()
-	delayOut, err2 := exec.Command("defaults", "read", "com.apple.screensaver", "askForPasswordDelay").Output()
+	askRaw, askT, err1 := evidenceCmd("defaults", "read", "com.apple.screensaver", "askForPassword")
+	delayRaw, delayT, err2 := evidenceCmd("defaults", "read", "com.apple.screensaver", "askForPasswordDelay")
+	ev := joinTranscripts(askT, delayT)
 
-	askEnabled := err1 == nil && strings.TrimSpace(string(askOut)) == "1"
-	delayImmediate := err2 == nil && strings.TrimSpace(string(delayOut)) == "0"
+	askEnabled := err1 == nil && strings.TrimSpace(askRaw) == "1"
+	delayImmediate := err2 == nil && strings.TrimSpace(delayRaw) == "0"
 
 	if askEnabled && delayImmediate {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
-			Status: StatusPass, Current: "immediate", Expected: "immediate", Fixable: true,
+			Status: StatusPass, Current: "immediate", Expected: "immediate",
+			Fixable: true, Evidence: ev,
 		}
 	}
 	current := "off"
@@ -32,7 +34,8 @@ func (c *ScreenLockCheck) Run() Result {
 	}
 	return Result{
 		ID: c.ID(), Name: c.Name(),
-		Status: StatusFail, Current: current, Expected: "immediate", Fixable: true,
+		Status: StatusFail, Current: current, Expected: "immediate",
+		Fixable: true, Evidence: ev,
 	}
 }
 

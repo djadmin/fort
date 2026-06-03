@@ -14,20 +14,21 @@ func (c *GatekeeperCheck) ID() string   { return "gatekeeper" }
 func (c *GatekeeperCheck) Name() string { return "Gatekeeper" }
 
 func (c *GatekeeperCheck) Run() Result {
-	out, err := exec.Command("spctl", "--status").Output()
+	// spctl writes to stderr on some macOS versions; CombinedOutput in evidenceCmd catches both.
+	raw, transcript, err := evidenceCmd("spctl", "--status")
 	current, status := "unknown", StatusWarn
 	if err == nil {
-		s := strings.TrimSpace(string(out))
 		switch {
-		case strings.Contains(s, "enabled"):
+		case strings.Contains(raw, "enabled"):
 			current, status = "enabled", StatusPass
-		case strings.Contains(s, "disabled"):
+		case strings.Contains(raw, "disabled"):
 			current, status = "disabled", StatusFail
 		}
 	}
 	return Result{
 		ID: c.ID(), Name: c.Name(),
-		Status: status, Current: current, Expected: "enabled", Fixable: true,
+		Status: status, Current: current, Expected: "enabled",
+		Fixable: true, Evidence: transcript,
 	}
 }
 

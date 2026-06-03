@@ -14,6 +14,7 @@ import (
 type policyRow struct {
 	checks.Result
 	Frameworks []checks.FrameworkEntry
+	HasEvidence bool
 }
 
 type reportData struct {
@@ -56,7 +57,11 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 
 	policies := make([]policyRow, len(results))
 	for i, r := range results {
-		policies[i] = policyRow{Result: r, Frameworks: checks.FrameworksFor(r.ID)}
+		policies[i] = policyRow{
+			Result:      r,
+			Frameworks:  checks.FrameworksFor(r.ID),
+			HasEvidence: r.Evidence != "",
+		}
 	}
 
 	data := reportData{
@@ -146,7 +151,7 @@ a{color:inherit;text-decoration:none}
   gap:1.5rem;
 }
 .brand{font-size:1.25rem;font-weight:800;color:#FFF;letter-spacing:-.035em;line-height:1}
-.brand-sub{font-size:.6875rem;color:#4B5574;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
+.brand-sub{font-size:.6875rem;color:#8B97B6;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
 
 .score-group{display:flex;align-items:center;gap:1rem;flex-shrink:0}
 .ring-wrap{position:relative;width:52px;height:52px}
@@ -159,10 +164,10 @@ a{color:inherit;text-decoration:none}
   font-family:var(--font);
 }
 .ring-frac{font-size:.625rem;font-weight:700;color:#FFF;line-height:1}
-.ring-unit{font-size:.4375rem;color:#4B5574;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
+.ring-unit{font-size:.4375rem;color:#8B97B6;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
 .score-text{}
 .score-pct{font-size:2.125rem;font-weight:800;letter-spacing:-.04em;line-height:1}
-.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#4B5574;margin-top:.2rem}
+.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#8B97B6;margin-top:.2rem}
 
 /* ── Meta strip ─────────────────────────────── */
 .meta{
@@ -172,7 +177,7 @@ a{color:inherit;text-decoration:none}
 }
 .mc{padding:.625rem 1.625rem;border-right:1px solid var(--meta-border)}
 .mc:last-child{border-right:none}
-.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#394361;margin-bottom:.15rem}
+.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#6878A4;margin-bottom:.15rem}
 .mv{font-size:.8125rem;font-weight:500;color:#B8BFCD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── Stats bar ──────────────────────────────── */
@@ -247,6 +252,24 @@ tr.row-warn{background:#FFFDF7}
 .arrow{color:var(--ink-4);margin:0 .3rem;font-size:.8125rem}
 .req{font-size:.875rem;color:var(--fail);font-weight:500}
 .req-warn{color:var(--warn)}
+
+/* ── Evidence transcript ────────────────────── */
+details.ev{margin-top:.4rem}
+details.ev summary{
+  font-size:.625rem;color:var(--ink-4);cursor:pointer;user-select:none;
+  list-style:none;display:inline-flex;align-items:center;gap:.3rem;
+}
+details.ev summary::-webkit-details-marker{display:none}
+details.ev summary::before{content:'▶';font-size:.45rem;transition:transform .15s}
+details.ev[open] summary::before{transform:rotate(90deg)}
+details.ev summary:hover{color:var(--ink-3)}
+pre.ev-pre{
+  margin-top:.4rem;
+  font-family:var(--mono);font-size:.6875rem;line-height:1.55;
+  background:#F8F8F7;border:1px solid var(--border);border-radius:4px;
+  padding:.5rem .75rem;color:var(--ink-2);
+  white-space:pre;overflow-x:auto;
+}
 
 /* ── Framework reference ────────────────────── */
 .fw-ref{}
@@ -368,6 +391,12 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
           <span class="val">{{.Current}}</span>
         {{else}}
           <span class="val">{{.Current}}</span><span class="arrow">→</span><span class="{{if eq .Status "fail"}}req{{else}}req-warn{{end}}">{{.Expected}}</span>
+        {{end}}
+        {{if .HasEvidence}}
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">{{.Evidence}}</pre>
+        </details>
         {{end}}
       </td>
     </tr>

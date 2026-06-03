@@ -183,7 +183,7 @@ func TestVersion(t *testing.T) {
 
 func TestRunDryRun(t *testing.T) {
 	out := captureStdout(func() {
-		code, err := run(false, false, true, false, false)
+		code, err := run(false, false, true, false, false, "")
 		if err != nil {
 			t.Errorf("run(dryRun) error: %v", err)
 		}
@@ -198,7 +198,7 @@ func TestRunDryRun(t *testing.T) {
 
 func TestRunJSONOutput(t *testing.T) {
 	out := captureStdout(func() {
-		run(true, false, false, false, false) //nolint
+		run(true, false, false, false, false, "") //nolint
 	})
 	var payload map[string]any
 	if err := json.Unmarshal([]byte(out), &payload); err != nil {

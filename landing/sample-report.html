@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Security Assessment · macbook-pro-demo</title>
+<title>Security Assessment · mbp-eng-01</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -39,7 +39,7 @@ a{color:inherit;text-decoration:none}
   gap:1.5rem;
 }
 .brand{font-size:1.25rem;font-weight:800;color:#FFF;letter-spacing:-.035em;line-height:1}
-.brand-sub{font-size:.6875rem;color:#4B5574;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
+.brand-sub{font-size:.6875rem;color:#8B97B6;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
 
 .score-group{display:flex;align-items:center;gap:1rem;flex-shrink:0}
 .ring-wrap{position:relative;width:52px;height:52px}
@@ -52,10 +52,10 @@ a{color:inherit;text-decoration:none}
   font-family:var(--font);
 }
 .ring-frac{font-size:.625rem;font-weight:700;color:#FFF;line-height:1}
-.ring-unit{font-size:.4375rem;color:#4B5574;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
+.ring-unit{font-size:.4375rem;color:#8B97B6;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
 .score-text{}
 .score-pct{font-size:2.125rem;font-weight:800;letter-spacing:-.04em;line-height:1}
-.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#4B5574;margin-top:.2rem}
+.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#8B97B6;margin-top:.2rem}
 
  
 .meta{
@@ -65,7 +65,7 @@ a{color:inherit;text-decoration:none}
 }
 .mc{padding:.625rem 1.625rem;border-right:1px solid var(--meta-border)}
 .mc:last-child{border-right:none}
-.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#394361;margin-bottom:.15rem}
+.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#6878A4;margin-bottom:.15rem}
 .mv{font-size:.8125rem;font-weight:500;color:#B8BFCD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
  
@@ -142,6 +142,24 @@ tr.row-warn{background:#FFFDF7}
 .req-warn{color:var(--warn)}
 
  
+details.ev{margin-top:.4rem}
+details.ev summary{
+  font-size:.625rem;color:var(--ink-4);cursor:pointer;user-select:none;
+  list-style:none;display:inline-flex;align-items:center;gap:.3rem;
+}
+details.ev summary::-webkit-details-marker{display:none}
+details.ev summary::before{content:'▶';font-size:.45rem;transition:transform .15s}
+details.ev[open] summary::before{transform:rotate(90deg)}
+details.ev summary:hover{color:var(--ink-3)}
+pre.ev-pre{
+  margin-top:.4rem;
+  font-family:var(--mono);font-size:.6875rem;line-height:1.55;
+  background:#F8F8F7;border:1px solid var(--border);border-radius:4px;
+  padding:.5rem .75rem;color:var(--ink-2);
+  white-space:pre;overflow-x:auto;
+}
+
+ 
 .fw-ref{}
 .fw-table{font-size:.6875rem}
 .fw-table thead th{font-size:.5rem;padding:.4rem 1rem}
@@ -180,6 +198,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
   .hd{border-radius:0}
   tr.row-fail,tr.row-warn{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .accent-td,.fw-dot{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  details.ev[open] pre.ev-pre{display:block}
 }
 </style>
 </head>
@@ -194,7 +213,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
   </div>
   <div class="score-group">
     <div class="score-text">
-      <div class="score-pct s-warn" style="color:#eab308">87<span style="font-size:.45em;font-weight:600;opacity:.45">%</span></div>
+      <div class="score-pct s-warn" style="color:#eab308">80<span style="font-size:.45em;font-weight:600;opacity:.45">%</span></div>
       <div class="score-tag">Compliance</div>
     </div>
     <div class="ring-wrap">
@@ -203,10 +222,10 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         <circle class="ring-arc" cx="26" cy="26" r="21"
           stroke="#eab308"
           stroke-dasharray="131.95"
-          stroke-dashoffset="17.59"/>
+          stroke-dashoffset="26.39"/>
       </svg>
       <div class="ring-label">
-        <span class="ring-frac">13/15</span>
+        <span class="ring-frac">12/15</span>
         <span class="ring-unit">checks</span>
       </div>
     </div>
@@ -215,17 +234,17 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
 
 
 <div class="meta">
-  <div class="mc"><div class="mk">Machine</div><div class="mv">macbook-pro-demo</div></div>
+  <div class="mc"><div class="mk">Machine</div><div class="mv">mbp-eng-01</div></div>
   <div class="mc"><div class="mk">macOS</div><div class="mv">15.4.1</div></div>
-  <div class="mc"><div class="mk">Serial</div><div class="mv">C02Y4NKHJGH7</div></div>
-  <div class="mc"><div class="mk">Generated</div><div class="mv">3 Jun 2026, 10:29 UTC</div></div>
+  <div class="mc"><div class="mk">Serial</div><div class="mv">FVFXQ2NBJGH5</div></div>
+  <div class="mc"><div class="mk">Generated</div><div class="mv">3 Jun 2026, 13:06 UTC</div></div>
 </div>
 
 
 <div class="stats card">
-  <div class="sv"><span class="sn p">13</span><span class="sl">passing</span></div>
-  <div class="sv"><span class="sn f">1</span><span class="sl">failing</span></div>
-  <div class="sv"><span class="sn w">1</span><span class="sl">warnings</span></div>
+  <div class="sv"><span class="sn p">12</span><span class="sl">passing</span></div>
+  <div class="sv"><span class="sn f">3</span><span class="sl">failing</span></div>
+  <div class="sv"><span class="sn w">0</span><span class="sl">warnings</span></div>
 </div>
 
 
@@ -258,6 +277,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         
           <span class="val">Dashlane</span>
         
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ ls -d /Applications/Dashlane.app
+/Applications/Dashlane.app</pre>
+        </details>
+        
       </td>
     </tr>
     
@@ -278,6 +304,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         
           <span class="val">on</span>
         
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ fdesetup status
+FileVault is On.</pre>
+        </details>
+        
       </td>
     </tr>
     
@@ -296,7 +329,17 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       </td>
       <td>
         
-          <span class="val">5 min</span>
+          <span class="val">1 min</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ defaults read com.apple.screensaver askForPassword
+1
+
+$ defaults read com.apple.screensaver askForPasswordDelay
+300</pre>
+        </details>
         
       </td>
     </tr>
@@ -316,27 +359,41 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       </td>
       <td>
         
-          <span class="val">1Password XProtect</span>
+          <span class="val">SentinelOne</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ ls -d /Applications/SentinelOne.app
+/Applications/SentinelOne.app</pre>
+        </details>
         
       </td>
     </tr>
     
-    <tr class="row-pass">
+    <tr class="row-fail">
       <td class="accent-td"></td>
       <td>
         <div class="cn">Application firewall</div>
         <div class="soc2-hint">SOC 2 CC6.6</div>
       </td>
       <td>
-        <span class="pill pass">
-          <span class="pill-icon">✓</span> Pass
+        <span class="pill fail">
+          <span class="pill-icon">✗</span> Fail
           
         </span>
         
       </td>
       <td>
         
-          <span class="val">on</span>
+          <span class="val">off</span><span class="arrow">→</span><span class="req">on</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
+Firewall is disabled. (State = 0)</pre>
+        </details>
         
       </td>
     </tr>
@@ -358,6 +415,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         
           <span class="val">enabled</span>
         
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ spctl --status
+assessor: enabled</pre>
+        </details>
+        
       </td>
     </tr>
     
@@ -377,6 +441,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td>
         
           <span class="val">enabled</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ csrutil status
+System Integrity Protection status: enabled.</pre>
+        </details>
         
       </td>
     </tr>
@@ -398,6 +469,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         
           <span class="val">off</span>
         
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ launchctl print system/com.openssh.sshd
+(no output)</pre>
+        </details>
+        
       </td>
     </tr>
     
@@ -417,6 +495,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td>
         
           <span class="val">admin</span><span class="arrow">→</span><span class="req">standard user</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ id
+uid=501(alice) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts),79(_appserverusr),80(admin),98(_lpadmin)</pre>
+        </details>
         
       </td>
     </tr>
@@ -438,6 +523,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         
           <span class="val">disabled</span>
         
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ defaults read /Library/Preferences/com.apple.loginwindow GuestEnabled
+0</pre>
+        </details>
+        
       </td>
     </tr>
     
@@ -457,6 +549,13 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td>
         
           <span class="val">disabled</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ defaults read /Library/Preferences/com.apple.loginwindow autoLoginUser
+(no output)</pre>
+        </details>
         
       </td>
     </tr>
@@ -478,25 +577,21 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
         
           <span class="val">all off</span>
         
-      </td>
-    </tr>
-    
-    <tr class="row-warn">
-      <td class="accent-td"></td>
-      <td>
-        <div class="cn">AirDrop</div>
-        <div class="soc2-hint">SOC 2 CC6.6</div>
-      </td>
-      <td>
-        <span class="pill warn">
-          <span class="pill-icon">◐</span> Warn
-          
-        </span>
         
-      </td>
-      <td>
-        
-          <span class="val">contacts only</span><span class="arrow">→</span><span class="req-warn">off</span>
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ launchctl list com.apple.smbd
+(no output)
+
+$ launchctl list com.apple.screensharing
+(no output)
+
+$ launchctl list com.apple.RemoteDesktopAgent
+(no output)
+
+$ launchctl list com.apple.InternetSharing
+(no output)</pre>
+        </details>
         
       </td>
     </tr>
@@ -504,8 +599,8 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
     <tr class="row-pass">
       <td class="accent-td"></td>
       <td>
-        <div class="cn">Automatic OS updates</div>
-        <div class="soc2-hint">SOC 2 CC6.8</div>
+        <div class="cn">AirDrop</div>
+        <div class="soc2-hint">SOC 2 CC6.6</div>
       </td>
       <td>
         <span class="pill pass">
@@ -516,7 +611,41 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       </td>
       <td>
         
-          <span class="val">on</span>
+          <span class="val">Off</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ defaults read com.apple.sharingd DiscoverableMode
+Off</pre>
+        </details>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-fail">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Automatic OS updates</div>
+        <div class="soc2-hint">SOC 2 CC6.8</div>
+      </td>
+      <td>
+        <span class="pill fail">
+          <span class="pill-icon">✗</span> Fail
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">off</span><span class="arrow">→</span><span class="req">on</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled
+0</pre>
+        </details>
         
       </td>
     </tr>
@@ -537,6 +666,16 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td>
         
           <span class="val">15.4</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ sw_vers -productVersion
+15.4
+
+$ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
+0</pre>
+        </details>
         
       </td>
     </tr>
@@ -597,7 +736,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td class="fw-ctrl">10.1 · 10.2</td>
     </tr>
     
-    <tr class="fw-pass">
+    <tr class="fw-fail">
       <td class="fw-dot"></td>
       <td class="fw-name">Application firewall</td>
       <td class="fw-ctrl">CC6.6</td>
@@ -669,7 +808,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td class="fw-ctrl">4.8 · 12.1</td>
     </tr>
     
-    <tr class="fw-warn">
+    <tr class="fw-pass">
       <td class="fw-dot"></td>
       <td class="fw-name">AirDrop</td>
       <td class="fw-ctrl">CC6.6</td>
@@ -678,7 +817,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
       <td class="fw-ctrl">3.14 · 12.1</td>
     </tr>
     
-    <tr class="fw-pass">
+    <tr class="fw-fail">
       <td class="fw-dot"></td>
       <td class="fw-name">Automatic OS updates</td>
       <td class="fw-ctrl">CC6.8</td>
@@ -702,7 +841,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
 
 
 <div class="footer">
-  <span>Generated by <a href="https://github.com/djadmin/fort">fort v0.1.1</a> &nbsp;·&nbsp; 3 Jun 2026, 10:29 UTC</span>
+  <span>Generated by <a href="https://github.com/djadmin/fort">fort v0.1.1</a> &nbsp;·&nbsp; 3 Jun 2026, 13:06 UTC</span>
   <span class="confidential">Confidential</span>
 </div>
 

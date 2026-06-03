@@ -18,6 +18,8 @@ type Result struct {
 	Expected string `json:"expected"`
 	Fixable  bool   `json:"fixable"`
 	Fixed    bool   `json:"fixed"`
+	// Evidence is a terminal transcript of the commands run, suitable for auditors.
+	Evidence string `json:"evidence,omitempty"`
 }
 
 // Check is the interface every security policy must implement.

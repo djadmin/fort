@@ -3,7 +3,6 @@
 package checks
 
 import (
-	"os/exec"
 	"strings"
 )
 
@@ -16,28 +15,29 @@ func (c *SIPCheck) ID() string   { return "sip" }
 func (c *SIPCheck) Name() string { return "System integrity (SIP)" }
 
 func (c *SIPCheck) Run() Result {
-	out, err := exec.Command("csrutil", "status").Output()
+	raw, transcript, err := evidenceCmd("csrutil", "status")
 	if err != nil {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusWarn, Current: "unknown", Expected: "enabled",
+			Evidence: transcript,
 		}
 	}
-	s := strings.TrimSpace(string(out))
-	if strings.Contains(s, "enabled") {
+	if strings.Contains(raw, "enabled") {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusPass, Current: "enabled", Expected: "enabled",
+			Evidence: transcript,
 		}
 	}
 	return Result{
 		ID: c.ID(), Name: c.Name(),
 		Status: StatusFail, Current: "disabled", Expected: "enabled",
-		Fixable: false,
+		Evidence: transcript,
 	}
 }
 
 // SIP can only be re-enabled by booting into Recovery Mode.
-func (c *SIPCheck) Fixable() bool        { return false }
-func (c *SIPCheck) Fix() error            { return nil }
+func (c *SIPCheck) Fixable() bool         { return false }
+func (c *SIPCheck) Fix() error             { return nil }
 func (c *SIPCheck) FixDescription() string { return "" }

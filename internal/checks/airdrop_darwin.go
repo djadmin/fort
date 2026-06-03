@@ -15,48 +15,46 @@ func (c *AirDropCheck) ID() string   { return "airdrop" }
 func (c *AirDropCheck) Name() string { return "AirDrop" }
 
 func (c *AirDropCheck) Run() Result {
-	out, err := exec.Command(
+	raw, transcript, err := evidenceCmd(
 		"defaults", "read",
 		"com.apple.sharingd",
 		"DiscoverableMode",
-	).Output()
-
+	)
 	if err != nil {
-		// Key missing on newer macOS — try reading via system-level domain
-		out2, err2 := exec.Command(
+		// Key missing on newer macOS — try the system-level domain.
+		raw, transcript, err = evidenceCmd(
 			"defaults", "read",
 			"/Library/Preferences/com.apple.sharingd",
 			"DiscoverableMode",
-		).Output()
-		if err2 != nil {
+		)
+		if err != nil {
 			return Result{
 				ID: c.ID(), Name: c.Name(),
 				Status: StatusWarn, Current: "unknown", Expected: "Contacts Only or Off",
-				Fixable: true,
+				Fixable: true, Evidence: transcript,
 			}
 		}
-		out = out2
 	}
 
-	mode := strings.TrimSpace(string(out))
+	mode := strings.TrimSpace(raw)
 	switch mode {
 	case "Off", "Contacts Only":
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusPass, Current: mode, Expected: "Contacts Only or Off",
-			Fixable: true,
+			Fixable: true, Evidence: transcript,
 		}
 	case "Everyone":
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusFail, Current: mode, Expected: "Contacts Only or Off",
-			Fixable: true,
+			Fixable: true, Evidence: transcript,
 		}
 	default:
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusWarn, Current: mode, Expected: "Contacts Only or Off",
-			Fixable: true,
+			Fixable: true, Evidence: transcript,
 		}
 	}
 }
@@ -70,7 +68,6 @@ func (c *AirDropCheck) Fix() error {
 	).Run(); err != nil {
 		return err
 	}
-	// Restart sharingd to apply immediately
 	_ = exec.Command("killall", "sharingd").Run()
 	return nil
 }

@@ -4,7 +4,7 @@ package checks
 
 import (
 	"os"
-	"os/exec"
+	"path/filepath"
 )
 
 var avApps = []struct {
@@ -48,29 +48,39 @@ func (c *AntivirusCheck) ID() string   { return "antivirus" }
 func (c *AntivirusCheck) Name() string { return "Antivirus / EDR" }
 
 func (c *AntivirusCheck) Run() Result {
+	searchPaths := []string{"/Applications", filepath.Join(os.Getenv("HOME"), "Applications")}
 	for _, av := range avApps {
-		if _, err := os.Stat("/Applications/" + av.app); err == nil {
-			return Result{
-				ID: c.ID(), Name: c.Name(),
-				Status: StatusPass, Current: av.name, Expected: "installed",
+		for _, dir := range searchPaths {
+			path := filepath.Join(dir, av.app)
+			if _, err := os.Stat(path); err == nil {
+				_, transcript, _ := evidenceCmd("ls", "-d", path)
+				return Result{
+					ID: c.ID(), Name: c.Name(),
+					Status: StatusPass, Current: av.name, Expected: "installed",
+					Evidence: transcript,
+				}
 			}
 		}
 	}
 	for _, av := range avProcesses {
-		if err := exec.Command("pgrep", "-x", av.proc).Run(); err == nil {
+		_, transcript, err := evidenceCmd("pgrep", "-x", av.proc)
+		if err == nil {
 			return Result{
 				ID: c.ID(), Name: c.Name(),
 				Status: StatusPass, Current: av.name, Expected: "installed",
+				Evidence: transcript,
 			}
 		}
 	}
 	// XProtect is always present on macOS — minimal built-in protection only
+	_, transcript, _ := evidenceCmd("ls", "-d", "/Library/Apple/System/Library/CoreServices/XProtect.app")
 	return Result{
 		ID: c.ID(), Name: c.Name(),
 		Status: StatusWarn, Current: "XProtect only (built-in)", Expected: "third-party AV/EDR",
+		Evidence: transcript,
 	}
 }
 
-func (c *AntivirusCheck) Fixable() bool        { return false }
-func (c *AntivirusCheck) Fix() error            { return nil }
+func (c *AntivirusCheck) Fixable() bool         { return false }
+func (c *AntivirusCheck) Fix() error             { return nil }
 func (c *AntivirusCheck) FixDescription() string { return "" }

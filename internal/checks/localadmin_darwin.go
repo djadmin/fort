@@ -3,7 +3,6 @@
 package checks
 
 import (
-	"os/exec"
 	"strings"
 )
 
@@ -15,26 +14,28 @@ func (c *LocalAdminCheck) ID() string   { return "localadmin" }
 func (c *LocalAdminCheck) Name() string { return "Local admin rights" }
 
 func (c *LocalAdminCheck) Run() Result {
-	out, err := exec.Command("id").Output()
+	raw, transcript, err := evidenceCmd("id")
 	if err != nil {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusWarn, Current: "unknown", Expected: "standard user",
+			Evidence: transcript,
 		}
 	}
-	if strings.Contains(string(out), "(admin)") {
+	if strings.Contains(raw, "(admin)") {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusFail, Current: "admin", Expected: "standard user",
-			Fixable: false,
+			Evidence: transcript,
 		}
 	}
 	return Result{
 		ID: c.ID(), Name: c.Name(),
 		Status: StatusPass, Current: "standard user", Expected: "standard user",
+		Evidence: transcript,
 	}
 }
 
-func (c *LocalAdminCheck) Fixable() bool { return false }
-func (c *LocalAdminCheck) Fix() error     { return nil }
+func (c *LocalAdminCheck) Fixable() bool         { return false }
+func (c *LocalAdminCheck) Fix() error             { return nil }
 func (c *LocalAdminCheck) FixDescription() string { return "" }

@@ -15,27 +15,25 @@ func (c *AutoLoginCheck) ID() string   { return "autologin" }
 func (c *AutoLoginCheck) Name() string { return "Automatic login" }
 
 func (c *AutoLoginCheck) Run() Result {
-	out, err := exec.Command(
+	raw, transcript, err := evidenceCmd(
 		"defaults", "read",
 		"/Library/Preferences/com.apple.loginwindow",
 		"autoLoginUser",
-	).Output()
-
+	)
 	// Error = key doesn't exist = auto-login is disabled
-	if err != nil || strings.TrimSpace(string(out)) == "" {
+	if err != nil || strings.TrimSpace(raw) == "" {
 		return Result{
 			ID: c.ID(), Name: c.Name(),
 			Status: StatusPass, Current: "disabled", Expected: "disabled",
-			Fixable: true,
+			Fixable: true, Evidence: transcript,
 		}
 	}
-	user := strings.TrimSpace(string(out))
 	return Result{
 		ID: c.ID(), Name: c.Name(),
-		Status:  StatusFail,
-		Current: "enabled for " + user,
+		Status:   StatusFail,
+		Current:  "enabled for " + strings.TrimSpace(raw),
 		Expected: "disabled",
-		Fixable: true,
+		Fixable:  true, Evidence: transcript,
 	}
 }
 

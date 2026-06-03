@@ -39,104 +39,243 @@ func main() {
 	fmt.Printf("Sample report written to %s\n", outPath)
 }
 
-// randomResults builds a realistic but fictional check result set.
-// Each check has a pool of plausible outcomes; one is picked at random.
+// randomResults builds a realistic but fictional check result set with fake evidence.
 func randomResults(rng *rand.Rand) []checks.Result {
-	// Helper: pick a pass result
-	pass := func(id, name, current string) checks.Result {
-		return checks.Result{ID: id, Name: name, Status: checks.StatusPass, Current: current, Expected: current}
-	}
-	fail := func(id, name, current, expected string) checks.Result {
-		return checks.Result{ID: id, Name: name, Status: checks.StatusFail, Current: current, Expected: expected}
-	}
-	warn := func(id, name, current, expected string) checks.Result {
-		return checks.Result{ID: id, Name: name, Status: checks.StatusWarn, Current: current, Expected: expected}
-	}
-
-	avVendors := []string{"CrowdStrike Falcon", "SentinelOne", "1Password XProtect", "Jamf Protect", "XProtect active"}
-	screenVals := []string{"immediate", "1 min", "5 min"}
-
-	// For each check, define a weighted pool of outcomes.
-	// First element is always a "pass" outcome; later elements are failure modes.
-	// chance(n) returns true with probability 1/n.
 	chance := func(n int) bool { return rng.Intn(n) == 0 }
 
-	pwmgr := pass("passwordmgr", "Password manager",
-		pick(rng, []string{"1Password", "Bitwarden", "Dashlane", "Keychain"}))
+	avVendors := []string{"CrowdStrike Falcon", "SentinelOne", "Jamf Protect", "Bitdefender"}
+	avPaths := map[string]string{
+		"CrowdStrike Falcon": "/Applications/CrowdStrike Falcon.app",
+		"SentinelOne":        "/Applications/SentinelOne.app",
+		"Jamf Protect":       "/Applications/JamfProtect.app",
+		"Bitdefender":        "/Applications/Bitdefender.app",
+	}
+
+	pmVendors := []string{"1Password", "Bitwarden", "Dashlane", "Keychain"}
+
+	screenVals := []string{"immediate", "1 min", "5 min"}
+	osVersions := []string{"15.5", "15.4.1", "15.4", "14.7.5"}
+
+	// ── Password manager ──────────────────────────────────
+	pm := pick(rng, pmVendors)
+	pwmgr := checks.Result{
+		ID: "passwordmgr", Name: "Password manager",
+		Status: checks.StatusPass, Current: pm, Expected: "installed",
+		Evidence: fmt.Sprintf("$ ls -d /Applications/%s.app\n/Applications/%s.app", pm, pm),
+	}
 	if chance(6) {
-		pwmgr = fail("passwordmgr", "Password manager", "not detected", "installed")
+		pwmgr = checks.Result{
+			ID: "passwordmgr", Name: "Password manager",
+			Status: checks.StatusFail, Current: "none found", Expected: "installed",
+			Evidence: "# Checked /Applications and ~/Applications — no known password manager found",
+		}
 	}
 
-	fv := pass("filevault", "Disk encryption", "on")
+	// ── FileVault ─────────────────────────────────────────
+	fv := checks.Result{
+		ID: "filevault", Name: "Disk encryption",
+		Status: checks.StatusPass, Current: "on", Expected: "on",
+		Evidence: "$ fdesetup status\nFileVault is On.",
+	}
 	if chance(8) {
-		fv = fail("filevault", "Disk encryption", "off", "on")
+		fv = checks.Result{
+			ID: "filevault", Name: "Disk encryption",
+			Status: checks.StatusFail, Current: "off", Expected: "on",
+			Evidence: "$ fdesetup status\nFileVault is Off.",
+		}
 	}
 
-	sl := pass("screenlock", "Screen lock", pick(rng, screenVals))
+	// ── Screen lock ───────────────────────────────────────
+	sv := pick(rng, screenVals)
+	askVal, delayVal := "1", "0"
+	if sv != "immediate" {
+		delayVal = "300"
+	}
+	sl := checks.Result{
+		ID: "screenlock", Name: "Screen lock",
+		Status: checks.StatusPass, Current: sv, Expected: "immediate",
+		Evidence: fmt.Sprintf(
+			"$ defaults read com.apple.screensaver askForPassword\n%s\n\n$ defaults read com.apple.screensaver askForPasswordDelay\n%s",
+			askVal, delayVal,
+		),
+	}
 	if chance(7) {
-		sl = warn("screenlock", "Screen lock", "30 min", "≤ 15 min")
+		sl = checks.Result{
+			ID: "screenlock", Name: "Screen lock",
+			Status: checks.StatusFail, Current: "off", Expected: "immediate",
+			Evidence: "$ defaults read com.apple.screensaver askForPassword\n0\n\n$ defaults read com.apple.screensaver askForPasswordDelay\n(no output)",
+		}
 	}
 
-	av := pass("antivirus", "Antivirus / EDR", pick(rng, avVendors))
+	// ── Antivirus ─────────────────────────────────────────
+	av := pick(rng, avVendors)
+	avPath := avPaths[av]
+	avResult := checks.Result{
+		ID: "antivirus", Name: "Antivirus / EDR",
+		Status: checks.StatusPass, Current: av, Expected: "installed",
+		Evidence: fmt.Sprintf("$ ls -d %s\n%s", avPath, avPath),
+	}
 	if chance(5) {
-		av = fail("antivirus", "Antivirus / EDR", "not detected", "active")
+		avResult = checks.Result{
+			ID: "antivirus", Name: "Antivirus / EDR",
+			Status: checks.StatusWarn, Current: "XProtect only (built-in)", Expected: "third-party AV/EDR",
+			Evidence: "$ ls -d /Library/Apple/System/Library/CoreServices/XProtect.app\n/Library/Apple/System/Library/CoreServices/XProtect.app",
+		}
 	}
 
-	fw := pass("firewall", "Application firewall", "on")
+	// ── Firewall ──────────────────────────────────────────
+	fw := checks.Result{
+		ID: "firewall", Name: "Application firewall",
+		Status: checks.StatusPass, Current: "on", Expected: "on",
+		Evidence: "$ /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate\nFirewall is enabled. (State = 1)",
+	}
 	if chance(3) {
-		fw = fail("firewall", "Application firewall", "off", "on")
+		fw = checks.Result{
+			ID: "firewall", Name: "Application firewall",
+			Status: checks.StatusFail, Current: "off", Expected: "on",
+			Evidence: "$ /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate\nFirewall is disabled. (State = 0)",
+		}
 	}
 
-	gk := pass("gatekeeper", "Gatekeeper", "enabled")
+	// ── Gatekeeper ────────────────────────────────────────
+	gk := checks.Result{
+		ID: "gatekeeper", Name: "Gatekeeper",
+		Status: checks.StatusPass, Current: "enabled", Expected: "enabled",
+		Evidence: "$ spctl --status\nassessor: enabled",
+	}
 	if chance(12) {
-		gk = fail("gatekeeper", "Gatekeeper", "disabled", "enabled")
+		gk = checks.Result{
+			ID: "gatekeeper", Name: "Gatekeeper",
+			Status: checks.StatusFail, Current: "disabled", Expected: "enabled",
+			Evidence: "$ spctl --status\nassessor: disabled",
+		}
 	}
 
-	sip := pass("sip", "System integrity (SIP)", "enabled")
+	// ── SIP ───────────────────────────────────────────────
+	sip := checks.Result{
+		ID: "sip", Name: "System integrity (SIP)",
+		Status: checks.StatusPass, Current: "enabled", Expected: "enabled",
+		Evidence: "$ csrutil status\nSystem Integrity Protection status: enabled.",
+	}
 	if chance(15) {
-		sip = fail("sip", "System integrity (SIP)", "disabled", "enabled")
+		sip = checks.Result{
+			ID: "sip", Name: "System integrity (SIP)",
+			Status: checks.StatusFail, Current: "disabled", Expected: "enabled",
+			Evidence: "$ csrutil status\nSystem Integrity Protection status: disabled.",
+		}
 	}
 
-	ssh := pass("ssh", "Remote login (SSH)", "off")
+	// ── SSH ───────────────────────────────────────────────
+	ssh := checks.Result{
+		ID: "ssh", Name: "Remote login (SSH)",
+		Status: checks.StatusPass, Current: "off", Expected: "off",
+		Evidence: "$ launchctl print system/com.openssh.sshd\n(no output)",
+	}
 	if chance(4) {
-		ssh = fail("ssh", "Remote login (SSH)", "on", "off")
+		ssh = checks.Result{
+			ID: "ssh", Name: "Remote login (SSH)",
+			Status: checks.StatusFail, Current: "on", Expected: "off",
+			Evidence: "$ launchctl print system/com.openssh.sshd\ncom.openssh.sshd = {\n\tactive count = 1\n\tpath = /System/Library/LaunchDaemons/ssh.plist\n\tstate = running\n}",
+		}
 	}
 
-	admin := pass("localadmin", "Local admin rights", "standard user")
+	// ── Local admin ───────────────────────────────────────
+	admin := checks.Result{
+		ID: "localadmin", Name: "Local admin rights",
+		Status: checks.StatusPass, Current: "standard user", Expected: "standard user",
+		Evidence: "$ id\nuid=502(alice) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts)",
+	}
 	if chance(2) {
-		admin = fail("localadmin", "Local admin rights", "admin", "standard user")
+		admin = checks.Result{
+			ID: "localadmin", Name: "Local admin rights",
+			Status: checks.StatusFail, Current: "admin", Expected: "standard user",
+			Evidence: "$ id\nuid=501(alice) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts),79(_appserverusr),80(admin),98(_lpadmin)",
+		}
 	}
 
-	guest := pass("guestaccount", "Guest account", "disabled")
+	// ── Guest account ─────────────────────────────────────
+	guest := checks.Result{
+		ID: "guestaccount", Name: "Guest account",
+		Status: checks.StatusPass, Current: "disabled", Expected: "disabled",
+		Evidence: "$ defaults read /Library/Preferences/com.apple.loginwindow GuestEnabled\n0",
+	}
 	if chance(10) {
-		guest = fail("guestaccount", "Guest account", "enabled", "disabled")
+		guest = checks.Result{
+			ID: "guestaccount", Name: "Guest account",
+			Status: checks.StatusFail, Current: "enabled", Expected: "disabled",
+			Evidence: "$ defaults read /Library/Preferences/com.apple.loginwindow GuestEnabled\n1",
+		}
 	}
 
-	autologin := pass("autologin", "Automatic login", "disabled")
+	// ── Auto-login ────────────────────────────────────────
+	autologin := checks.Result{
+		ID: "autologin", Name: "Automatic login",
+		Status: checks.StatusPass, Current: "disabled", Expected: "disabled",
+		Evidence: "$ defaults read /Library/Preferences/com.apple.loginwindow autoLoginUser\n(no output)",
+	}
 	if chance(10) {
-		autologin = fail("autologin", "Automatic login", "enabled", "disabled")
+		autologin = checks.Result{
+			ID: "autologin", Name: "Automatic login",
+			Status: checks.StatusFail, Current: "enabled for alice", Expected: "disabled",
+			Evidence: "$ defaults read /Library/Preferences/com.apple.loginwindow autoLoginUser\nalice",
+		}
 	}
 
-	sharing := pass("sharing", "Sharing services", "all off")
+	// ── Sharing ───────────────────────────────────────────
+	sharing := checks.Result{
+		ID: "sharing", Name: "Sharing services",
+		Status: checks.StatusPass, Current: "all off", Expected: "all off",
+		Evidence: "$ launchctl list com.apple.smbd\n(no output)\n\n$ launchctl list com.apple.screensharing\n(no output)\n\n$ launchctl list com.apple.RemoteDesktopAgent\n(no output)\n\n$ launchctl list com.apple.InternetSharing\n(no output)",
+	}
 	if chance(5) {
-		sharing = warn("sharing", "Sharing services", "screen sharing on", "all off")
+		sharing = checks.Result{
+			ID: "sharing", Name: "Sharing services",
+			Status: checks.StatusFail, Current: "screen sharing", Expected: "all off",
+			Evidence: "$ launchctl list com.apple.smbd\n(no output)\n\n$ launchctl list com.apple.screensharing\n{\n\t\"PID\" = 1204;\n\t\"Label\" = \"com.apple.screensharing\";\n}\n\n$ launchctl list com.apple.RemoteDesktopAgent\n(no output)\n\n$ launchctl list com.apple.InternetSharing\n(no output)",
+		}
 	}
 
-	airdrop := pass("airdrop", "AirDrop", "off")
+	// ── AirDrop ───────────────────────────────────────────
+	airdrop := checks.Result{
+		ID: "airdrop", Name: "AirDrop",
+		Status: checks.StatusPass, Current: "Off", Expected: "Contacts Only or Off",
+		Evidence: "$ defaults read com.apple.sharingd DiscoverableMode\nOff",
+	}
 	if chance(4) {
-		airdrop = warn("airdrop", "AirDrop", "contacts only", "off")
+		airdrop = checks.Result{
+			ID: "airdrop", Name: "AirDrop",
+			Status: checks.StatusWarn, Current: "Contacts Only", Expected: "Contacts Only or Off",
+			Evidence: "$ defaults read com.apple.sharingd DiscoverableMode\nContacts Only",
+		}
 	}
 
-	updates := pass("osupdates", "Automatic OS updates", "on")
+	// ── OS updates ────────────────────────────────────────
+	updates := checks.Result{
+		ID: "osupdates", Name: "Automatic OS updates",
+		Status: checks.StatusPass, Current: "on", Expected: "on",
+		Evidence: "$ defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled\n1",
+	}
 	if chance(3) {
-		updates = fail("osupdates", "Automatic OS updates", "off", "on")
+		updates = checks.Result{
+			ID: "osupdates", Name: "Automatic OS updates",
+			Status: checks.StatusFail, Current: "off", Expected: "on",
+			Evidence: "$ defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled\n0",
+		}
 	}
 
-	osv := pass("osversion", "OS patch status",
-		pick(rng, []string{"15.5", "15.4.1", "15.4", "14.7.5"}))
+	// ── OS version ────────────────────────────────────────
+	ver := pick(rng, osVersions)
+	osv := checks.Result{
+		ID: "osversion", Name: "OS patch status",
+		Status: checks.StatusPass, Current: ver, Expected: "up to date",
+		Evidence: fmt.Sprintf(
+			"$ sw_vers -productVersion\n%s\n\n$ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount\n0",
+			ver,
+		),
+	}
 
 	return []checks.Result{
-		pwmgr, fv, sl, av, fw, gk, sip, ssh, admin, guest, autologin, sharing, airdrop, updates, osv,
+		pwmgr, fv, sl, avResult, fw, gk, sip, ssh, admin, guest, autologin, sharing, airdrop, updates, osv,
 	}
 }
 
@@ -148,7 +287,8 @@ func pick(rng *rand.Rand, opts []string) string {
 
 type policyRow struct {
 	checks.Result
-	Frameworks []checks.FrameworkEntry
+	Frameworks  []checks.FrameworkEntry
+	HasEvidence bool
 }
 
 type jsonSummary struct {
@@ -213,7 +353,11 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 
 	policies := make([]policyRow, len(results))
 	for i, r := range results {
-		policies[i] = policyRow{Result: r, Frameworks: checks.FrameworksFor(r.ID)}
+		policies[i] = policyRow{
+			Result:      r,
+			Frameworks:  checks.FrameworksFor(r.ID),
+			HasEvidence: r.Evidence != "",
+		}
 	}
 
 	data := reportData{
@@ -303,7 +447,7 @@ a{color:inherit;text-decoration:none}
   gap:1.5rem;
 }
 .brand{font-size:1.25rem;font-weight:800;color:#FFF;letter-spacing:-.035em;line-height:1}
-.brand-sub{font-size:.6875rem;color:#4B5574;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
+.brand-sub{font-size:.6875rem;color:#8B97B6;margin-top:.2rem;font-weight:400;letter-spacing:.01em}
 
 .score-group{display:flex;align-items:center;gap:1rem;flex-shrink:0}
 .ring-wrap{position:relative;width:52px;height:52px}
@@ -316,10 +460,10 @@ a{color:inherit;text-decoration:none}
   font-family:var(--font);
 }
 .ring-frac{font-size:.625rem;font-weight:700;color:#FFF;line-height:1}
-.ring-unit{font-size:.4375rem;color:#4B5574;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
+.ring-unit{font-size:.4375rem;color:#8B97B6;margin-top:.1rem;text-transform:uppercase;letter-spacing:.05em}
 .score-text{}
 .score-pct{font-size:2.125rem;font-weight:800;letter-spacing:-.04em;line-height:1}
-.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#4B5574;margin-top:.2rem}
+.score-tag{font-size:.5625rem;text-transform:uppercase;letter-spacing:.1em;color:#8B97B6;margin-top:.2rem}
 
 /* ── Meta strip ─────────────────────────────── */
 .meta{
@@ -329,7 +473,7 @@ a{color:inherit;text-decoration:none}
 }
 .mc{padding:.625rem 1.625rem;border-right:1px solid var(--meta-border)}
 .mc:last-child{border-right:none}
-.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#394361;margin-bottom:.15rem}
+.mk{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#6878A4;margin-bottom:.15rem}
 .mv{font-size:.8125rem;font-weight:500;color:#B8BFCD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── Stats bar ──────────────────────────────── */
@@ -405,6 +549,24 @@ tr.row-warn{background:#FFFDF7}
 .req{font-size:.875rem;color:var(--fail);font-weight:500}
 .req-warn{color:var(--warn)}
 
+/* ── Evidence transcript ────────────────────── */
+details.ev{margin-top:.4rem}
+details.ev summary{
+  font-size:.625rem;color:var(--ink-4);cursor:pointer;user-select:none;
+  list-style:none;display:inline-flex;align-items:center;gap:.3rem;
+}
+details.ev summary::-webkit-details-marker{display:none}
+details.ev summary::before{content:'▶';font-size:.45rem;transition:transform .15s}
+details.ev[open] summary::before{transform:rotate(90deg)}
+details.ev summary:hover{color:var(--ink-3)}
+pre.ev-pre{
+  margin-top:.4rem;
+  font-family:var(--mono);font-size:.6875rem;line-height:1.55;
+  background:#F8F8F7;border:1px solid var(--border);border-radius:4px;
+  padding:.5rem .75rem;color:var(--ink-2);
+  white-space:pre;overflow-x:auto;
+}
+
 /* ── Framework reference ────────────────────── */
 .fw-ref{}
 .fw-table{font-size:.6875rem}
@@ -444,6 +606,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
   .hd{border-radius:0}
   tr.row-fail,tr.row-warn{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .accent-td,.fw-dot{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  details.ev[open] pre.ev-pre{display:block}
 }
 </style>
 </head>
@@ -525,6 +688,12 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
           <span class="val">{{.Current}}</span>
         {{else}}
           <span class="val">{{.Current}}</span><span class="arrow">→</span><span class="{{if eq .Status "fail"}}req{{else}}req-warn{{end}}">{{.Expected}}</span>
+        {{end}}
+        {{if .HasEvidence}}
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">{{.Evidence}}</pre>
+        </details>
         {{end}}
       </td>
     </tr>

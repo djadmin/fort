@@ -16,10 +16,10 @@ func (c *FirewallCheck) ID() string   { return "firewall" }
 func (c *FirewallCheck) Name() string { return "Application firewall" }
 
 func (c *FirewallCheck) Run() Result {
-	out, err := exec.Command(sockfilterfw, "--getglobalstate").Output()
+	raw, transcript, err := evidenceCmd(sockfilterfw, "--getglobalstate")
 	current, status := "unknown", StatusWarn
 	if err == nil {
-		s := strings.ToLower(strings.TrimSpace(string(out)))
+		s := strings.ToLower(raw)
 		switch {
 		case strings.Contains(s, "enabled") || strings.Contains(s, "state = 1"):
 			current, status = "on", StatusPass
@@ -29,7 +29,8 @@ func (c *FirewallCheck) Run() Result {
 	}
 	return Result{
 		ID: c.ID(), Name: c.Name(),
-		Status: status, Current: current, Expected: "on", Fixable: true,
+		Status: status, Current: current, Expected: "on",
+		Fixable: true, Evidence: transcript,
 	}
 }
 

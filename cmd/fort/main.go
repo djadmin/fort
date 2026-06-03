@@ -23,6 +23,7 @@ func main() {
 		dryRun     bool
 		report     bool
 		yes        bool
+		only       string
 	)
 
 	root := &cobra.Command{
@@ -38,10 +39,11 @@ func main() {
 	root.Flags().BoolVar(&dryRun, "dry-run", false, "show what --fix would change without applying it")
 	root.Flags().BoolVar(&report, "report", false, "write an HTML evidence report (fort-report.html)")
 	root.Flags().BoolVarP(&yes, "yes", "y", false, "skip confirmation prompt when using --fix")
+	root.Flags().StringVar(&only, "only", "", "run only these checks (comma-separated IDs, e.g. filevault,firewall)")
 
 	var exitCode int
 	root.RunE = func(cmd *cobra.Command, args []string) error {
-		code, err := run(jsonOutput, fix, dryRun, report, yes)
+		code, err := run(jsonOutput, fix, dryRun, report, yes, only)
 		exitCode = code
 		return err
 	}
@@ -54,10 +56,32 @@ func main() {
 
 // run returns (exitCode, error).
 // exitCode: 0 = all pass, 1 = any fail, 2 = any warn and no fail.
-func run(jsonOutput, fix, dryRun, report, yes bool) (int, error) {
+func run(jsonOutput, fix, dryRun, report, yes bool, only string) (int, error) {
 	allChecks := checks.All()
 	if len(allChecks) == 0 {
 		return 1, fmt.Errorf("no checks available for this platform")
+	}
+
+	// Filter to requested IDs when --only is set.
+	if only != "" {
+		wanted := map[string]bool{}
+		for _, id := range strings.Split(only, ",") {
+			wanted[strings.TrimSpace(id)] = true
+		}
+		filtered := allChecks[:0]
+		for _, c := range allChecks {
+			if wanted[c.ID()] {
+				filtered = append(filtered, c)
+				delete(wanted, c.ID())
+			}
+		}
+		for unknown := range wanted {
+			fmt.Fprintf(os.Stderr, "  warning: unknown check ID %q — skipped\n", unknown)
+		}
+		allChecks = filtered
+		if len(allChecks) == 0 {
+			return 1, fmt.Errorf("no matching checks for --only %q", only)
+		}
 	}
 
 	if dryRun {
