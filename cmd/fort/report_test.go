@@ -131,6 +131,54 @@ func TestWriteReportFixed(t *testing.T) {
 	mustContain(t, html, "fixed", "fixed indicator")
 }
 
+func TestWriteReportEvidence(t *testing.T) {
+	results := []checks.Result{
+		{
+			ID: "filevault", Name: "Disk encryption",
+			Status: checks.StatusPass, Current: "on", Expected: "on",
+			Evidence: "$ fdesetup status\nFileVault is On.",
+		},
+		{
+			ID: "firewall", Name: "Application firewall",
+			Status: checks.StatusFail, Current: "off", Expected: "on",
+			Evidence: "$ /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate\nFirewall is disabled. (State = 0)",
+		},
+		{
+			// No evidence — toggle must not appear
+			ID: "gatekeeper", Name: "Gatekeeper",
+			Status: checks.StatusPass, Current: "enabled", Expected: "enabled",
+		},
+	}
+
+	tmp, err := os.CreateTemp("", "fort-report-evidence-*.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmp.Name())
+	tmp.Close()
+
+	if err := writeReport(results, "host", "SN1", "15.0", tmp.Name()); err != nil {
+		t.Fatalf("writeReport() error: %v", err)
+	}
+	html := string(mustReadFile(t, tmp.Name()))
+
+	// Evidence transcript must appear for checks that have it
+	mustContain(t, html, "ev-pre", "evidence pre block")
+	mustContain(t, html, "fdesetup status", "filevault evidence command")
+	mustContain(t, html, "FileVault is On.", "filevault evidence output")
+	mustContain(t, html, "Firewall is disabled", "firewall evidence output")
+
+	// The expand/collapse toggle must appear
+	mustContain(t, html, `class="ev"`, "evidence details element")
+	mustContain(t, html, "evidence", "evidence summary label")
+
+	// Checks without evidence must not inject the toggle; count actual HTML elements only
+	evidenceCount := strings.Count(html, `class="ev-pre"`)
+	if evidenceCount != 2 {
+		t.Errorf("expected 2 ev-pre elements (one per check with evidence), got %d", evidenceCount)
+	}
+}
+
 func TestWriteReportInvalidPath(t *testing.T) {
 	err := writeReport(nil, "h", "s", "1", "/nonexistent/dir/report.html")
 	if err == nil {

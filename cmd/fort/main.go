@@ -14,7 +14,7 @@ import (
 	"github.com/djadmin/fort/internal/checks"
 )
 
-var version = "0.1.1"
+var version = "0.2.0"
 
 func main() {
 	var (

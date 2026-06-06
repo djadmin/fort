@@ -208,3 +208,45 @@ func TestRunJSONOutput(t *testing.T) {
 		t.Errorf("--json tool = %v, want fort", payload["tool"])
 	}
 }
+
+func TestRunOnly(t *testing.T) {
+	// --only with a single known ID should produce JSON with exactly one policy.
+	out := captureStdout(func() {
+		run(true, false, false, false, false, "filevault") //nolint
+	})
+	var payload map[string]any
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("--json --only output is not valid JSON: %v", err)
+	}
+	policies, ok := payload["policies"].([]any)
+	if !ok {
+		t.Fatal("policies field missing or wrong type")
+	}
+	if len(policies) != 1 {
+		t.Errorf("--only filevault: expected 1 policy, got %d", len(policies))
+	}
+	p := policies[0].(map[string]any)
+	if p["id"] != "filevault" {
+		t.Errorf("--only filevault: policy id = %v, want filevault", p["id"])
+	}
+}
+
+func TestRunOnlyUnknownID(t *testing.T) {
+	// An unknown ID should warn to stderr and return an error (no matching checks).
+	var stderr bytes.Buffer
+	oldStderr := os.Stderr
+	r, w, _ := os.Pipe()
+	os.Stderr = w
+
+	captureStdout(func() {
+		run(true, false, false, false, false, "nonexistent_check_id") //nolint
+	})
+
+	w.Close()
+	os.Stderr = oldStderr
+	io.Copy(&stderr, r)
+
+	if !strings.Contains(stderr.String(), "nonexistent_check_id") {
+		t.Errorf("expected warning about unknown ID in stderr, got: %q", stderr.String())
+	}
+}

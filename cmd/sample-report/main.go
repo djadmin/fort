@@ -361,7 +361,7 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 	}
 
 	data := reportData{
-		Version:    "0.1.1",
+		Version:    "0.2.0",
 		Hostname:   hostname,
 		Serial:     serial,
 		OSVersion:  osVer,

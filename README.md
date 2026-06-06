@@ -52,12 +52,13 @@ brew upgrade djadmin/tap/fort
 ## Usage
 
 ```bash
-fort                # audit your Mac
-fort --dry-run      # preview what --fix would change — nothing is applied
-fort --fix          # audit, show confirmation prompt, apply selected fixes
-fort --fix --yes    # skip prompt — for scripts, MDM push, or cron
-fort --json         # structured JSON output for automation
-fort --report       # write fort-report-YYYY-MM-DD.html (print to PDF)
+fort                          # audit your Mac
+fort --dry-run                # preview what --fix would change — nothing is applied
+fort --fix                    # audit, show confirmation prompt, apply selected fixes
+fort --fix --yes              # skip prompt — for scripts, MDM push, or cron
+fort --json                   # structured JSON output for automation
+fort --report                 # write fort-report-YYYY-MM-DD.html (print to PDF)
+fort --only filevault,firewall  # run only the specified checks (comma-separated IDs)
 ```
 
 Exit codes: `0` all pass · `1` any fail · `2` any warn
@@ -78,15 +79,16 @@ Exit codes: `0` all pass · `1` any fail · `2` any warn
 
 ```json
 {
-  "tool": "fort", "version": "0.1.1", "hostname": "alice-mbp",
+  "tool": "fort", "version": "0.2.0", "hostname": "alice-mbp",
   "os_version": "15.5", "timestamp": "2026-05-28T10:00:00Z",
   "summary": { "total": 15, "pass": 11, "fail": 2, "warn": 2, "score": "11/15" },
   "policies": [{ "id": "filevault", "status": "pass", "current": "on",
+    "evidence": "$ fdesetup status\nFileVault is On.",
     "frameworks": { "SOC 2": ["CC6.1", "CC6.7"], "ISO 27001": ["A.8.3"] } }]
 }
 ```
 
-`fort --report` writes a self-contained HTML evidence report — machine identity, timestamp, per-check results, and framework references. Opens locally or prints to PDF.
+`fort --report` writes a self-contained HTML evidence report — machine identity, serial number, OS version, timestamp, per-check results with the exact commands run and their verbatim output, and framework control references. Opens locally or prints to PDF. See a [sample report](https://djadmin.github.io/fort/sample-report.html).
 
 ## Contributing
 
