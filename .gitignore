@@ -5,3 +5,8 @@ waitlist.csv
 dist/
 .claude/
 .DS_Store
+
+# internal strategy/launch docs — live in fort-internal, never publish
+STRATEGY.md
+LAUNCH.md
+/sample-report

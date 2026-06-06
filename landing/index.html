@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fort — One command. Every Mac. SOC 2 ready.</title>
-<meta name="description" content="fort audits your Mac's security settings, fixes what it finds, and generates a compliance report. No MDM. No signup. No agent.">
-<meta property="og:title" content="fort — One command. Every Mac. SOC 2 ready.">
-<meta property="og:description" content="Audit, fix, and prove macOS endpoint security from one command. 15 checks, auto-fix, compliance reports. Free + open source.">
+<title>fort — Audit and fix your Mac's security in one command</title>
+<meta name="description" content="fort runs 15 security checks on your Mac and fixes what it safely can. One binary — no agent, no signup, no MDM. Free and open source.">
+<meta property="og:title" content="fort — Audit and fix your Mac's security in one command">
+<meta property="og:description" content="15 security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary — no agent, no signup. Free & open source.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://djadmin.github.io/fort">
 <meta property="og:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/fort-audit.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="fort — One command. Every Mac. SOC 2 ready.">
-<meta name="twitter:description" content="Audit, fix, and prove macOS endpoint security from one command. 15 checks, auto-fix, compliance reports. Free + open source.">
+<meta name="twitter:title" content="fort — Audit and fix your Mac's security in one command">
+<meta name="twitter:description" content="15 security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary — no agent, no signup. Free & open source.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/fort-audit.jpg">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -459,11 +459,11 @@ footer{
 <section class="hero">
   <div class="badge">
     <span class="badge-dot"></span>
-    Open source · macOS · v0.1.0
+    Open source · macOS · Beta
   </div>
-  <h1>One command.<br>Every Mac.<br><em>SOC 2 ready.</em></h1>
+  <h1>One command.<br>Every Mac.<br><em>Locked down.</em></h1>
   <p class="hero-sub">
-    fort audits your Mac's security settings, fixes what it finds, and produces a timestamped compliance report — no MDM, no signup, no agent.
+    fort runs 15 security checks on your Mac and fixes what it safely can — disk encryption, firewall, screen lock, SSH, sharing and more. One binary, no agent, no signup.
   </p>
 
   <div class="terminal-wrap">
@@ -507,6 +507,14 @@ footer{
     <span class="install-note" id="install-note-go" style="display:none">Requires <a href="https://go.dev" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Go 1.21+</a></span>
   </div>
 
+  <!-- PRODUCT HUNT BADGE — on launch day, replace this comment with the embed code
+       from https://www.producthunt.com/posts/fort  →  "Embed" → "Featured" badge.
+       It looks like:
+       <a href="https://www.producthunt.com/posts/fort?utm_source=badge-featured" target="_blank" rel="noopener">
+         <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=XXXXXX&theme=dark" alt="fort on Product Hunt" width="250" height="54" />
+       </a>
+       Paste it just above the .cta-row below and wrap in a div with margin-bottom:1.5rem. -->
+
   <div class="cta-row">
     <a href="https://github.com/djadmin/fort" target="_blank" rel="noopener" class="btn btn-primary">
       View on GitHub
@@ -520,8 +528,8 @@ footer{
 <section class="how" id="how">
   <div class="container">
     <div class="section-label">How it works</div>
-    <div class="section-title">Audit. Fix. Prove.</div>
-    <p class="section-sub">Three commands cover the entire compliance workflow. No dashboard to learn, no agent to manage.</p>
+    <div class="section-title">Audit. Fix. Done.</div>
+    <p class="section-sub">Three commands, the whole job. No dashboard to learn, no agent to manage, nothing running in the background.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">Step 01</div>
@@ -538,8 +546,8 @@ footer{
       <div class="step">
         <div class="step-num">Step 03</div>
         <div class="step-cmd">$ fort --report</div>
-        <h3>Evidence for auditors</h3>
-        <p>Writes a timestamped HTML report with machine identity, per-check results, and SOC 2 control references. Print to PDF in one click.</p>
+        <h3>Keep a record</h3>
+        <p>Writes a timestamped HTML report with machine identity, per-check results, and the exact command behind each. Print to PDF in one click.</p>
       </div>
     </div>
   </div>
@@ -735,29 +743,29 @@ footer{
   <div class="container">
     <div class="report-inner">
       <div>
-        <div class="section-label">Evidence report</div>
-        <div class="section-title">Auditor-ready in seconds.</div>
-        <p class="section-sub" style="margin-bottom:2rem">Run <code style="background:#1e2736;padding:.15em .4em;border-radius:4px;color:#22c55e">fort --report</code> and hand the file to your auditor. No portal, no upload, no waiting.</p>
+        <div class="section-label">Report</div>
+        <div class="section-title">A record you can keep.</div>
+        <p class="section-sub" style="margin-bottom:2rem">Run <code style="background:#1e2736;padding:.15em .4em;border-radius:4px;color:#22c55e">fort --report</code> for a self-contained HTML snapshot of your Mac's security posture. No portal, no upload, no account. <a href="sample-report.html" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;text-underline-offset:3px">View sample report →</a></p>
         <div class="report-points">
           <div class="report-point">
             <div class="report-point-icon rp-green">✓</div>
             <div>
-              <h4>Machine identity included</h4>
-              <p>Hostname, serial number, OS version, and timestamp — everything an auditor needs to verify the evidence is real.</p>
+              <h4>Verbatim command output</h4>
+              <p>Every check captures the exact command run and its raw output. Expand any finding to see the full terminal transcript — never a black box.</p>
             </div>
           </div>
           <div class="report-point">
             <div class="report-point-icon rp-blue">📄</div>
             <div>
               <h4>Print to PDF in one click</h4>
-              <p>Self-contained HTML file. Open in any browser, hit Cmd+P. No external dependencies, no server required.</p>
+              <p>Self-contained HTML file with machine identity, serial number, and timestamp. Open in any browser, hit Cmd+P.</p>
             </div>
           </div>
           <div class="report-point">
             <div class="report-point-icon rp-yellow">🗺️</div>
             <div>
-              <h4>SOC 2 control references</h4>
-              <p>Each check maps to the relevant SOC 2 Trust Services Criteria (CC6.x, CC7.x). Shows auditors exactly what's covered.</p>
+              <h4>Maps to security frameworks</h4>
+              <p>Each check references the relevant controls in SOC 2, ISO 27001, NIST CSF, and CIS — handy context if your team tracks them.</p>
             </div>
           </div>
         </div>
@@ -800,22 +808,22 @@ footer{
 <section>
   <div class="container">
     <div class="section-label">Who it's for</div>
-    <div class="section-title">Built for teams that move fast.</div>
+    <div class="section-title">Who it's for.</div>
     <div class="who-grid">
       <div class="who-card">
-        <div class="who-emoji">🚀</div>
-        <h3>Startups doing SOC 2</h3>
-        <p>Get every Mac green before your first audit. No MDM enrollment, no IT department needed. One command per machine.</p>
+        <div class="who-emoji">🧑‍💻</div>
+        <h3>Developers & power users</h3>
+        <p>Lock down your own machine in seconds. Read every check before you run it — it's one MIT-licensed Go binary, no magic.</p>
       </div>
       <div class="who-card">
-        <div class="who-emoji">🧑‍💼</div>
-        <h3>vCISOs & consultants</h3>
-        <p>Run fort across your client's fleet, collect the HTML reports, and hand a before/after to the auditor. Repeatable, professional, fast.</p>
+        <div class="who-emoji">🔐</div>
+        <h3>The privacy-conscious</h3>
+        <p>No account, no telemetry, no background process. fort reads local state, shows its work, and exits. Run it whenever you want.</p>
       </div>
       <div class="who-card">
-        <div class="who-emoji">💼</div>
-        <h3>BYOD & contractor teams</h3>
-        <p>Contractors can self-attest without enrolling in MDM. Transparent, local, open-source — they can read every line before running it.</p>
+        <div class="who-emoji">🛠️</div>
+        <h3>Small teams & consultants</h3>
+        <p>A fast, repeatable way to check and harden Macs without enrolling them in MDM. One command per machine, no IT department needed.</p>
       </div>
     </div>
   </div>
@@ -827,7 +835,7 @@ footer{
     <div class="waitlist-inner">
       <div class="section-label">Coming soon</div>
       <div class="section-title">Team dashboard.</div>
-      <p class="section-sub">Fleet view, drift alerts, policy files, and auditor exports — across every Mac in your org. Join the waitlist and we'll reach out first.</p>
+      <p class="section-sub">Fleet view, drift alerts, and policy files — across every Mac in your org. Join the waitlist and we'll reach out first.</p>
       <form class="wl-form" id="wl-form" onsubmit="submitWaitlist(event)">
         <input type="email" class="wl-input" placeholder="you@company.com" required id="wl-email">
         <button type="submit" class="wl-submit">Join waitlist</button>
