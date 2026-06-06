@@ -87,6 +87,12 @@ var frameworkMappings = map[string][]FrameworkEntry{
 		{"NIST CSF", []string{"PR.AC-1", "PR.AC-7"}},
 		{"CIS v8", []string{"4.3"}},
 	},
+	"sudo_touchid": {
+		{"SOC 2", []string{"CC6.1", "CC6.3"}},
+		{"ISO 27001", []string{"A.5.17", "A.8.5"}},
+		{"NIST CSF", []string{"PR.AC-7"}},
+		{"CIS v8", []string{"6.3", "6.5"}},
+	},
 	"sharing": {
 		{"SOC 2", []string{"CC6.6"}},
 		{"ISO 27001", []string{"A.8.20", "A.8.21"}},

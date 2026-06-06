@@ -4,6 +4,19 @@ All notable changes to fort are documented here.
 
 ---
 
+## v0.3.0 — 2026-06-06
+
+**New check: TouchID for sudo**
+
+Most Macs have TouchID enabled for login, Apple Pay, and 1Password — but not for `sudo` in Terminal. That means you're still typing your password every time you run a privileged command, when your fingerprint could do it instead. This release adds a check for it.
+
+- New check `sudo_touchid`: detects whether PAM is configured to accept TouchID for `sudo`
+- On macOS 14+ (Sonoma), Apple ships `/etc/pam.d/sudo_local.template` to make this a one-line opt-in — fort checks whether you've done it
+- `fort --fix` writes `/etc/pam.d/sudo_local` automatically; password still works as a fallback
+- Maps to SOC 2 CC6.1 / CC6.3, ISO 27001 A.5.17, NIST CSF PR.AC-7, CIS v8 6.3
+
+---
+
 ## v0.2.0 — 2026-05-28
 
 **Homebrew tap + distribution polish**

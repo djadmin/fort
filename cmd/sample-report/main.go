@@ -221,6 +221,22 @@ func randomResults(rng *rand.Rand) []checks.Result {
 		}
 	}
 
+	// ── TouchID for sudo ─────────────────────────────────
+	touchid := checks.Result{
+		ID: "sudo_touchid", Name: "TouchID for sudo",
+		Status: checks.StatusPass, Current: "enabled", Expected: "enabled",
+		Fixable: true,
+		Evidence: "$ cat /etc/pam.d/sudo_local\nauth       sufficient     pam_tid.so\n\n$ cat /etc/pam.d/sudo\n# sudo: auth account password session\nauth       include        sudo_local\nauth       sufficient     pam_smartcard.so\nauth       required       pam_opendirectory.so",
+	}
+	if chance(55) {
+		touchid = checks.Result{
+			ID: "sudo_touchid", Name: "TouchID for sudo",
+			Status: checks.StatusFail, Current: "disabled", Expected: "enabled",
+			Fixable: true,
+			Evidence: "$ cat /etc/pam.d/sudo_local\n(not found)\n\n$ cat /etc/pam.d/sudo\n# sudo: auth account password session\nauth       include        sudo_local\nauth       sufficient     pam_smartcard.so\nauth       required       pam_opendirectory.so\n\n$ cat /etc/pam.d/sudo_local.template\n# sudo_local: local config file which survives system update and is included for sudo\n# uncomment following line to enable Touch ID for sudo\n#auth       sufficient     pam_tid.so",
+		}
+	}
+
 	// ── Sharing ───────────────────────────────────────────
 	sharing := checks.Result{
 		ID: "sharing", Name: "Sharing services",
@@ -275,7 +291,7 @@ func randomResults(rng *rand.Rand) []checks.Result {
 	}
 
 	return []checks.Result{
-		pwmgr, fv, sl, avResult, fw, gk, sip, ssh, admin, guest, autologin, sharing, airdrop, updates, osv,
+		pwmgr, fv, sl, avResult, fw, gk, sip, ssh, admin, guest, autologin, touchid, sharing, airdrop, updates, osv,
 	}
 }
 
@@ -361,7 +377,7 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 	}
 
 	data := reportData{
-		Version:    "0.2.0",
+		Version:    "0.3.0",
 		Hostname:   hostname,
 		Serial:     serial,
 		OSVersion:  osVer,

@@ -17,10 +17,11 @@ func All() []Check {
 		&SIPCheck{},          // CC6.8 — system integrity
 		&SSHCheck{},          // CC6.6 — remote access control
 
-		// ── Access controls (3) ────────────────────────────────────────
-		&LocalAdminCheck{},   // CC6.3 — least privilege
-		&GuestAccountCheck{}, // CC6.1 — unauthorized access prevention
-		&AutoLoginCheck{},    // CC6.1 — physical access bypass prevention
+		// ── Access controls (4) ────────────────────────────────────────
+		&LocalAdminCheck{},    // CC6.3 — least privilege
+		&GuestAccountCheck{},  // CC6.1 — unauthorized access prevention
+		&AutoLoginCheck{},     // CC6.1 — physical access bypass prevention
+		&SudoTouchIDCheck{},   // CC6.1 — privileged command authentication
 
 		// ── Exposure reduction (2) ─────────────────────────────────────
 		&SharingCheck{},      // CC6.6 — attack surface reduction

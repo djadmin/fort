@@ -11,7 +11,7 @@ import (
 
 func TestRegistryCount(t *testing.T) {
 	got := len(checks.All())
-	const want = 15
+	const want = 16
 	if got != want {
 		t.Errorf("All() returned %d checks, want %d — update this test when adding a check", got, want)
 	}
