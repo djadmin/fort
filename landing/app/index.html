@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fort for Mac — Your Mac's security checker</title>
-<meta name="description" content="fort for Mac scans your security settings, explains every finding in plain language, and fixes what it safely can — with one click. Free and open source.">
-<meta property="og:title" content="fort for Mac — Your Mac's security checker">
-<meta property="og:description" content="18 checks. Plain-language explanations. One-click fixes. No account, no tracking. macOS 13+.">
+<title>fort for Mac — Find out if your Mac is actually secure</title>
+<meta name="description" content="fort scans 18 security settings, explains every finding in plain English, and fixes what it safely can — with one click. Join the early access list.">
+<meta property="og:title" content="fort for Mac — Find out if your Mac is actually secure">
+<meta property="og:description" content="18 checks. Plain-language explanations. One-click fixes. Join the early access list.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://djadmin.github.io/fort/app">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="fort for Mac — Your Mac's security checker">
-<meta name="twitter:description" content="18 checks. Plain-language explanations. One-click fixes. No account, no tracking. macOS 13+.">
+<meta name="twitter:title" content="fort for Mac — Find out if your Mac is actually secure">
+<meta name="twitter:description" content="18 checks. Plain-language explanations. One-click fixes. Join the early access list.">
 <style>
 :root {
   --bg:      #05080f;
@@ -182,6 +182,29 @@ footer{
 footer a{color:var(--dimmed)}
 footer a:hover{color:var(--white)}
 
+/* WAITLIST FORM */
+.wl-form{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+.wl-input{
+  flex:1;min-width:220px;
+  padding:.7rem 1rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  color:var(--white);font-size:.9375rem;outline:none;transition:border-color .2s;
+}
+.wl-input::placeholder{color:var(--muted)}
+.wl-input:focus{border-color:var(--green)}
+.wl-submit{
+  padding:.7rem 1.5rem;background:var(--green);color:#051a0a;
+  font-size:.9375rem;font-weight:700;border:none;border-radius:8px;
+  cursor:pointer;transition:opacity .15s,transform .1s;white-space:nowrap;
+}
+.wl-submit:hover{opacity:.9;transform:translateY(-1px)}
+.wl-note{margin-top:.75rem;font-size:.8125rem;color:var(--muted)}
+.wl-success{
+  display:none;padding:1rem 1.5rem;
+  background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.2);
+  border-radius:8px;color:var(--green);font-weight:500;
+}
+
 /* CATEGORY COLORS */
 .cat-data{background:rgba(10,132,255,.15);color:#4fa3ff}
 .cat-access{background:rgba(94,92,230,.15);color:#9694f5}
@@ -203,14 +226,14 @@ footer a:hover{color:var(--white)}
 
 <section class="hero">
   <div class="badge"><div class="badge-dot"></div>Early access</div>
-  <h1>Your Mac's security,<br><em>explained in plain English</em></h1>
-  <p class="sub">fort scans 18 security settings, tells you what each one does and why it matters, and fixes what it safely can — with one click. No account. No tracking. Runs entirely on your Mac.</p>
-  <div class="cta-row">
-    <a href="REPLACE_WITH_DRIVE_LINK" class="btn btn-primary">
-      ↓ Download for Mac — Alpha
-    </a>
-  </div>
-  <div class="hero-meta">macOS 13 Ventura or later &nbsp;·&nbsp; Apple Silicon + Intel &nbsp;·&nbsp; No account required &nbsp;·&nbsp; Alpha build</div>
+  <h1>Find out if your Mac<br><em>is actually secure</em></h1>
+  <p class="sub">fort scans 18 security settings, explains each one in plain English, and fixes what it safely can — in one click. No jargon. No anxiety. Just clarity.</p>
+  <form class="wl-form" id="wl-form" onsubmit="submitWaitlist(event)" style="max-width:480px;margin:0 auto 1rem">
+    <input class="wl-input" id="wl-email" type="email" placeholder="your@email.com" required>
+    <button type="submit" class="wl-submit">Get early access</button>
+  </form>
+  <div id="wl-success" class="wl-success">You're on the list — we'll be in touch soon.</div>
+  <p class="wl-note">macOS 13+ &nbsp;·&nbsp; Apple Silicon + Intel &nbsp;·&nbsp; No spam</p>
 </section>
 
 <hr class="divider">
@@ -323,5 +346,27 @@ footer a:hover{color:var(--white)}
   </p>
 </footer>
 
+<script>
+async function submitWaitlist(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  const btn = e.target.querySelector('.wl-submit');
+  btn.textContent = 'Joining…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('https://app.loops.so/api/newsletter-form/cmpo0fcia1jv00jy4i0qdlsbr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ email }),
+    });
+    if (!res.ok) throw new Error();
+    document.getElementById('wl-form').style.display = 'none';
+    document.getElementById('wl-success').style.display = 'block';
+  } catch {
+    btn.textContent = 'Try again';
+    btn.disabled = false;
+  }
+}
+</script>
 </body>
 </html>
