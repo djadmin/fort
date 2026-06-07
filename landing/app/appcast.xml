@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Host this file at: https://djadmin.github.io/fort-app/appcast.xml
+     Then add to Fort's Info.plist (via project.yml settings):
+       SUFeedURL = https://djadmin.github.io/fort-app/appcast.xml
+
+     Generate the <sparkle:edSignature> for each release with:
+       ./bin/generate_appcast <path-to-dmg-or-zip>
+     (generate_appcast ships with the Sparkle release download) -->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Fort</title>
+    <link>https://github.com/djadmin/fort-app</link>
+    <description>Fort for Mac — security check updates</description>
+    <language>en</language>
+
+    <item>
+      <title>Fort 0.1.0</title>
+      <pubDate>Sat, 07 Jun 2026 00:00:00 +0000</pubDate>
+      <sparkle:version>1</sparkle:version>
+      <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+      <sparkle:releaseNotesLink>https://github.com/djadmin/fort-app/releases/tag/v0.1.0</sparkle:releaseNotesLink>
+      <!-- Replace url, length, and edSignature after archiving + signing -->
+      <enclosure
+        url="https://github.com/djadmin/fort-app/releases/download/v0.1.0/Fort-0.1.0.dmg"
+        length="0"
+        type="application/octet-stream"
+        sparkle:edSignature="REPLACE_WITH_GENERATED_SIGNATURE"
+      />
+    </item>
+  </channel>
+</rss>
