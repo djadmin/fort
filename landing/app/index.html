@@ -457,13 +457,10 @@ async function submitWaitlist(e) {
   btn.textContent = 'Joining…';
   btn.disabled = true;
   try {
-    const res = await fetch('https://app.loops.so/api/v1/contacts/update', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer b76df0cdcb58d5af18964445d84270fb',
-      },
-      body: JSON.stringify({ email, mailingLists: { 'cmq5fq1rc0c9h0jzy3g4obohr': true } }),
+    const res = await fetch('https://app.loops.so/api/newsletter-form/cmpo0fcia1jv00jy4i0qdlsbr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ email }),
     });
     if (!res.ok) throw new Error();
     document.getElementById('wl-form').style.display = 'none';
