@@ -938,7 +938,7 @@ async function submitWaitlist(e) {
     const res = await fetch('https://app.loops.so/api/newsletter-form/cmpo0fcia1jv00jy4i0qdlsbr', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ email }),
+      body: new URLSearchParams({ email, site: 'fort-cli' }),
     });
     if (!res.ok) throw new Error('failed');
     document.getElementById('wl-form').style.display = 'none';
