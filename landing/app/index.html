@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fort for Mac — Find out if your Mac is actually secure</title>
+<title>fort for Mac — Your Mac has security gaps. Let's find them.</title>
 <meta name="description" content="fort scans 18 security settings, explains every finding in plain English, and fixes what it safely can — with one click. Join the early access list.">
-<meta property="og:title" content="fort for Mac — Find out if your Mac is actually secure">
+<meta property="og:title" content="fort for Mac — Your Mac has security gaps. Let's find them.">
 <meta property="og:description" content="18 checks. Plain-language explanations. One-click fixes. Join the early access list.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://djadmin.github.io/fort/app">
+<meta property="og:image" content="https://djadmin.github.io/fort/app/screenshot.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="fort for Mac — Find out if your Mac is actually secure">
+<meta name="twitter:title" content="fort for Mac — Your Mac has security gaps. Let's find them.">
 <meta name="twitter:description" content="18 checks. Plain-language explanations. One-click fixes. Join the early access list.">
+<meta name="twitter:image" content="https://djadmin.github.io/fort/app/screenshot.png">
 <style>
 :root {
   --bg:      #05080f;
@@ -182,6 +184,20 @@ footer{
 footer a{color:var(--dimmed)}
 footer a:hover{color:var(--white)}
 
+/* SCREENSHOT */
+.screenshot-wrap{
+  padding:3rem 2rem 0;
+  max-width:900px;margin:0 auto;
+}
+.screenshot-window{
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06);
+}
+.screenshot-window img{
+  display:block;width:100%;height:auto;
+}
+
 /* WAITLIST FORM */
 .wl-form{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
 .wl-input{
@@ -226,7 +242,7 @@ footer a:hover{color:var(--white)}
 
 <section class="hero">
   <div class="badge"><div class="badge-dot"></div>Early access</div>
-  <h1>Find out if your Mac<br><em>is actually secure</em></h1>
+  <h1>Your Mac has security gaps.<br><em>Let's find them.</em></h1>
   <p class="sub">fort scans 18 security settings, explains each one in plain English, and fixes what it safely can — in one click. No jargon. No anxiety. Just clarity.</p>
   <form class="wl-form" id="wl-form" onsubmit="submitWaitlist(event)" style="max-width:480px;margin:0 auto 1rem">
     <input class="wl-input" id="wl-email" type="email" placeholder="your@email.com" required>
@@ -235,6 +251,12 @@ footer a:hover{color:var(--white)}
   <div id="wl-success" class="wl-success">You're on the list — we'll be in touch soon.</div>
   <p class="wl-note">macOS 13+ &nbsp;·&nbsp; Apple Silicon + Intel &nbsp;·&nbsp; No spam</p>
 </section>
+
+<div class="screenshot-wrap">
+  <div class="screenshot-window">
+    <img src="screenshot.png" alt="Fort for Mac — overview screen showing score ring and category tiles" width="960" height="680">
+  </div>
+</div>
 
 <hr class="divider">
 
