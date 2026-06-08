@@ -935,10 +935,13 @@ async function submitWaitlist(e) {
   btn.disabled = true;
 
   try {
-    const res = await fetch('https://app.loops.so/api/newsletter-form/cmpo0fcia1jv00jy4i0qdlsbr', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ email, signed_up_cli: 'true' }),
+    const res = await fetch('https://app.loops.so/api/v1/contacts/update', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer b76df0cdcb58d5af18964445d84270fb',
+      },
+      body: JSON.stringify({ email, mailingLists: { 'cmq5fpbjh0di00j049hmxh7s1': true } }),
     });
     if (!res.ok) throw new Error('failed');
     document.getElementById('wl-form').style.display = 'none';
