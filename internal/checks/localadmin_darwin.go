@@ -23,9 +23,13 @@ func (c *LocalAdminCheck) Run() Result {
 		}
 	}
 	if strings.Contains(raw, "(admin)") {
+		// On a single-user personal Mac the only account is an admin by default, so a
+		// hard Fail here alarms almost everyone with something they realistically won't
+		// (and often shouldn't) change. Surface it as an informational note, not a
+		// failure: best practice is a separate standard account for daily use.
 		return Result{
 			ID: c.ID(), Name: c.Name(),
-			Status: StatusFail, Current: "admin", Expected: "standard user",
+			Status: StatusWarn, Current: "admin", Expected: "standard user (optional)",
 			Evidence: transcript,
 		}
 	}
@@ -36,6 +40,6 @@ func (c *LocalAdminCheck) Run() Result {
 	}
 }
 
-func (c *LocalAdminCheck) Fixable() bool         { return false }
+func (c *LocalAdminCheck) Fixable() bool          { return false }
 func (c *LocalAdminCheck) Fix() error             { return nil }
 func (c *LocalAdminCheck) FixDescription() string { return "" }

@@ -18,7 +18,19 @@ func (c *ScreenLockCheck) Run() Result {
 	delayRaw, delayT, err2 := evidenceCmd("defaults", "read", "com.apple.screensaver", "askForPasswordDelay")
 	ev := joinTranscripts(askT, delayT)
 
-	askEnabled := err1 == nil && strings.TrimSpace(askRaw) == "1"
+	// On macOS Ventura and later this legacy preference key is usually unreadable (the
+	// setting moved into a protected domain). If we can't read askForPassword at all, we
+	// must NOT claim the lock is off — that's a false alarm on a perfectly fine Mac.
+	// Report "unknown" and let the user verify in System Settings.
+	if err1 != nil {
+		return Result{
+			ID: c.ID(), Name: c.Name(),
+			Status: StatusWarn, Current: "unknown (verify in System Settings)", Expected: "immediate",
+			Fixable: true, Evidence: ev,
+		}
+	}
+
+	askEnabled := strings.TrimSpace(askRaw) == "1"
 	delayImmediate := err2 == nil && strings.TrimSpace(delayRaw) == "0"
 
 	if askEnabled && delayImmediate {
