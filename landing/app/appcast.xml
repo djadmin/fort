@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Host this file at: https://djadmin.github.io/fort-app/appcast.xml
+<!-- Host this file at: https://djadmin.github.io/fort/app/appcast.xml
      Then add to Fort's Info.plist (via project.yml settings):
-       SUFeedURL = https://djadmin.github.io/fort-app/appcast.xml
+       SUFeedURL = https://djadmin.github.io/fort/app/appcast.xml
 
      Generate the <sparkle:edSignature> for each release with:
        ./bin/generate_appcast <path-to-dmg-or-zip>
