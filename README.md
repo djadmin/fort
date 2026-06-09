@@ -1,9 +1,11 @@
-<p align="center">
-  <img src="svgs/glowing-turret-transparent.svg" width="80" alt="fort">
-  <h1 align="center">fort</h1>
-</p>
+# fort
 
-<p align="center"><strong>Know your Mac's security posture, fix the gaps, and keep it locked down. One command.</strong></p>
+**Know your Mac's security posture, fix the gaps, and keep it locked down. One command.**
+
+[![CI](https://github.com/djadmin/fort/actions/workflows/ci.yml/badge.svg)](https://github.com/djadmin/fort/actions)
+[![Release](https://img.shields.io/github/v/release/djadmin/fort)](https://github.com/djadmin/fort/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
 
 `fort` runs 15+ security checks on your Mac, fixes what it safely can, and writes an auditor-ready report. No agent, no signup, no MDM enrollment. Just a single binary.
 
@@ -11,16 +13,16 @@ Good for anyone who wants to harden their Mac. Essential for teams preparing for
 
 **[djadmin.github.io/fort](https://djadmin.github.io/fort)**
 
-<p align="center">
-  <img src="docs/fort-demo.gif" alt="fort: audit your Mac, then fix what's safe, in one command" width="760">
-</p>
+<img src="docs/fort-cli.png" width="49%" alt="fort runs a full security audit and shows where you stand"> <img src="docs/fort-fix-cli.png" width="49%" alt="fort --fix reviews each change before applying it">
+
+`fort` audits every control and shows where you stand. `fort --fix` reviews each change, then applies, after you confirm.
+
+<details>
+<summary><b>Watch a full run</b></summary><br>
+<img src="docs/fort-demo.gif" width="760" alt="fort auditing a Mac in one command">
+</details>
 
 ## Install
-
-[![CI](https://github.com/djadmin/fort/actions/workflows/ci.yml/badge.svg)](https://github.com/djadmin/fort/actions)
-[![Release](https://img.shields.io/github/v/release/djadmin/fort)](https://github.com/djadmin/fort/releases)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
 
 **Homebrew** _(recommended)_
 ```bash
