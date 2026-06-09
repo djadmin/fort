@@ -14,7 +14,7 @@ import (
 type SudoTouchIDCheck struct{}
 
 func (c *SudoTouchIDCheck) ID() string   { return "sudo_touchid" }
-func (c *SudoTouchIDCheck) Name() string { return "TouchID for sudo" }
+func (c *SudoTouchIDCheck) Name() string { return "Touch ID for sudo" }
 
 func (c *SudoTouchIDCheck) Run() Result {
 	// macOS 14+ (Sonoma): /etc/pam.d/sudo includes sudo_local; user creates

@@ -213,19 +213,19 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
   </div>
   <div class="score-group">
     <div class="score-text">
-      <div class="score-pct s-pass" style="color:#22c55e">94<span style="font-size:.45em;font-weight:600;opacity:.45">%</span></div>
+      <div class="score-pct s-warn" style="color:#eab308">88<span style="font-size:.45em;font-weight:600;opacity:.45">%</span></div>
       <div class="score-tag">Compliance</div>
     </div>
     <div class="ring-wrap">
       <svg viewBox="0 0 52 52" width="52" height="52">
         <circle class="ring-track" cx="26" cy="26" r="21"/>
         <circle class="ring-arc" cx="26" cy="26" r="21"
-          stroke="#22c55e"
+          stroke="#eab308"
           stroke-dasharray="131.95"
-          stroke-dashoffset="8.25"/>
+          stroke-dashoffset="16.49"/>
       </svg>
       <div class="ring-label">
-        <span class="ring-frac">15/16</span>
+        <span class="ring-frac">14/16</span>
         <span class="ring-unit">checks</span>
       </div>
     </div>
@@ -235,16 +235,16 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
 
 <div class="meta">
   <div class="mc"><div class="mk">Machine</div><div class="mv">mbp-eng-01</div></div>
-  <div class="mc"><div class="mk">macOS</div><div class="mv">14.7.5</div></div>
-  <div class="mc"><div class="mk">Serial</div><div class="mv">C02WN1ABHV29</div></div>
+  <div class="mc"><div class="mk">macOS</div><div class="mv">15.4</div></div>
+  <div class="mc"><div class="mk">Serial</div><div class="mv">C02XK1AFJGH5</div></div>
   <div class="mc"><div class="mk">Generated</div><div class="mv">6 Jun 2026, 15:18 UTC</div></div>
 </div>
 
 
 <div class="stats card">
-  <div class="sv"><span class="sn p">15</span><span class="sl">passing</span></div>
+  <div class="sv"><span class="sn p">14</span><span class="sl">passing</span></div>
   <div class="sv"><span class="sn f">1</span><span class="sl">failing</span></div>
-  <div class="sv"><span class="sn w">0</span><span class="sl">warnings</span></div>
+  <div class="sv"><span class="sn w">1</span><span class="sl">warnings</span></div>
 </div>
 
 
@@ -329,7 +329,7 @@ FileVault is On.</pre>
       </td>
       <td>
         
-          <span class="val">1 min</span>
+          <span class="val">5 min</span>
         
         
         <details class="ev">
@@ -344,28 +344,28 @@ $ defaults read com.apple.screensaver askForPasswordDelay
       </td>
     </tr>
     
-    <tr class="row-pass">
+    <tr class="row-warn">
       <td class="accent-td"></td>
       <td>
         <div class="cn">Antivirus / EDR</div>
         <div class="soc2-hint">SOC 2 CC6.8 · CC7.1</div>
       </td>
       <td>
-        <span class="pill pass">
-          <span class="pill-icon">✓</span> Pass
+        <span class="pill warn">
+          <span class="pill-icon">◐</span> Warn
           
         </span>
         
       </td>
       <td>
         
-          <span class="val">Jamf Protect</span>
+          <span class="val">XProtect only (built-in)</span><span class="arrow">→</span><span class="req-warn">third-party AV/EDR</span>
         
         
         <details class="ev">
           <summary>evidence</summary>
-          <pre class="ev-pre">$ ls -d /Applications/JamfProtect.app
-/Applications/JamfProtect.app</pre>
+          <pre class="ev-pre">$ ls -d /Library/Apple/System/Library/CoreServices/XProtect.app
+/Library/Apple/System/Library/CoreServices/XProtect.app</pre>
         </details>
         
       </td>
@@ -425,38 +425,11 @@ assessor: enabled</pre>
       </td>
     </tr>
     
-    <tr class="row-pass">
+    <tr class="row-fail">
       <td class="accent-td"></td>
       <td>
         <div class="cn">System integrity (SIP)</div>
         <div class="soc2-hint">SOC 2 CC6.8</div>
-      </td>
-      <td>
-        <span class="pill pass">
-          <span class="pill-icon">✓</span> Pass
-          
-        </span>
-        
-      </td>
-      <td>
-        
-          <span class="val">enabled</span>
-        
-        
-        <details class="ev">
-          <summary>evidence</summary>
-          <pre class="ev-pre">$ csrutil status
-System Integrity Protection status: enabled.</pre>
-        </details>
-        
-      </td>
-    </tr>
-    
-    <tr class="row-fail">
-      <td class="accent-td"></td>
-      <td>
-        <div class="cn">Remote login (SSH)</div>
-        <div class="soc2-hint">SOC 2 CC6.6</div>
       </td>
       <td>
         <span class="pill fail">
@@ -467,17 +440,40 @@ System Integrity Protection status: enabled.</pre>
       </td>
       <td>
         
-          <span class="val">on</span><span class="arrow">→</span><span class="req">off</span>
+          <span class="val">disabled</span><span class="arrow">→</span><span class="req">enabled</span>
+        
+        
+        <details class="ev">
+          <summary>evidence</summary>
+          <pre class="ev-pre">$ csrutil status
+System Integrity Protection status: disabled.</pre>
+        </details>
+        
+      </td>
+    </tr>
+    
+    <tr class="row-pass">
+      <td class="accent-td"></td>
+      <td>
+        <div class="cn">Remote login (SSH)</div>
+        <div class="soc2-hint">SOC 2 CC6.6</div>
+      </td>
+      <td>
+        <span class="pill pass">
+          <span class="pill-icon">✓</span> Pass
+          
+        </span>
+        
+      </td>
+      <td>
+        
+          <span class="val">off</span>
         
         
         <details class="ev">
           <summary>evidence</summary>
           <pre class="ev-pre">$ launchctl print system/com.openssh.sshd
-com.openssh.sshd = {
-	active count = 1
-	path = /System/Library/LaunchDaemons/ssh.plist
-	state = running
-}</pre>
+(no output)</pre>
         </details>
         
       </td>
@@ -567,7 +563,7 @@ uid=502(alice) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts)</pr
     <tr class="row-pass">
       <td class="accent-td"></td>
       <td>
-        <div class="cn">TouchID for sudo</div>
+        <div class="cn">Touch ID for sudo</div>
         <div class="soc2-hint">SOC 2 CC6.1 · CC6.3</div>
       </td>
       <td>
@@ -702,13 +698,13 @@ Off</pre>
       </td>
       <td>
         
-          <span class="val">15.5</span>
+          <span class="val">15.4.1</span>
         
         
         <details class="ev">
           <summary>evidence</summary>
           <pre class="ev-pre">$ sw_vers -productVersion
-15.5
+15.4.1
 
 $ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
 0</pre>
@@ -723,7 +719,7 @@ $ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
 
 
 <div class="card fw-ref" style="margin-top:1rem;border-radius:var(--radius)">
-  <div class="section-head">Framework Control Reference &nbsp;—&nbsp; SOC 2 · ISO 27001 · NIST CSF · CIS v8</div>
+  <div class="section-head">Framework Control Reference &nbsp;·&nbsp; SOC 2 · ISO 27001 · NIST CSF · CIS v8</div>
   <table class="fw-table">
     <thead>
       <tr>
@@ -764,7 +760,7 @@ $ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
       <td class="fw-ctrl">4.3</td>
     </tr>
     
-    <tr class="fw-pass">
+    <tr class="fw-warn">
       <td class="fw-dot"></td>
       <td class="fw-name">Antivirus / EDR</td>
       <td class="fw-ctrl">CC6.8 · CC7.1</td>
@@ -791,7 +787,7 @@ $ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
       <td class="fw-ctrl">2.6 · 10.5</td>
     </tr>
     
-    <tr class="fw-pass">
+    <tr class="fw-fail">
       <td class="fw-dot"></td>
       <td class="fw-name">System integrity (SIP)</td>
       <td class="fw-ctrl">CC6.8</td>
@@ -800,7 +796,7 @@ $ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
       <td class="fw-ctrl">2.5 · 10.5</td>
     </tr>
     
-    <tr class="fw-fail">
+    <tr class="fw-pass">
       <td class="fw-dot"></td>
       <td class="fw-name">Remote login (SSH)</td>
       <td class="fw-ctrl">CC6.6</td>
@@ -838,7 +834,7 @@ $ defaults read /Library/Preferences/com.apple.SoftwareUpdate PendingUpdateCount
     
     <tr class="fw-pass">
       <td class="fw-dot"></td>
-      <td class="fw-name">TouchID for sudo</td>
+      <td class="fw-name">Touch ID for sudo</td>
       <td class="fw-ctrl">CC6.1 · CC6.3</td>
       <td class="fw-ctrl">A.5.17 · A.8.5</td>
       <td class="fw-ctrl">PR.AC-7</td>

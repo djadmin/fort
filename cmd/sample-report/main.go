@@ -1,6 +1,10 @@
-// cmd/sample-report: generates a randomised but realistic fort HTML report for demos.
+// cmd/sample-report: generates a realistic fort HTML report for demos.
 // Run: go run ./cmd/sample-report [output-path]
 // Default output: landing/sample-report.html
+//
+// The output is deterministic: it uses a fixed seed and timestamp so the
+// committed sample-report.html is reproducible and never drifts. Re-run this
+// after changing the report template, then commit the result.
 package main
 
 import (
@@ -10,10 +14,14 @@ import (
 	"math/rand"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/djadmin/fort/internal/checks"
 )
+
+// sampleSeed is fixed so the generated sample report is reproducible.
+// Chosen to yield a realistic "mostly passing, a few findings" result
+// (14/16: 14 pass, 1 fail, 1 warn).
+const sampleSeed = 1
 
 func main() {
 	outPath := "landing/sample-report.html"
@@ -21,7 +29,7 @@ func main() {
 		outPath = os.Args[1]
 	}
 
-	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+	rng := rand.New(rand.NewSource(sampleSeed))
 	results := randomResults(rng)
 
 	hostname := pick(rng, []string{
@@ -223,14 +231,14 @@ func randomResults(rng *rand.Rand) []checks.Result {
 
 	// ── TouchID for sudo ─────────────────────────────────
 	touchid := checks.Result{
-		ID: "sudo_touchid", Name: "TouchID for sudo",
+		ID: "sudo_touchid", Name: "Touch ID for sudo",
 		Status: checks.StatusPass, Current: "enabled", Expected: "enabled",
 		Fixable: true,
 		Evidence: "$ cat /etc/pam.d/sudo_local\nauth       sufficient     pam_tid.so\n\n$ cat /etc/pam.d/sudo\n# sudo: auth account password session\nauth       include        sudo_local\nauth       sufficient     pam_smartcard.so\nauth       required       pam_opendirectory.so",
 	}
 	if chance(55) {
 		touchid = checks.Result{
-			ID: "sudo_touchid", Name: "TouchID for sudo",
+			ID: "sudo_touchid", Name: "Touch ID for sudo",
 			Status: checks.StatusFail, Current: "disabled", Expected: "enabled",
 			Fixable: true,
 			Evidence: "$ cat /etc/pam.d/sudo_local\n(not found)\n\n$ cat /etc/pam.d/sudo\n# sudo: auth account password session\nauth       include        sudo_local\nauth       sufficient     pam_smartcard.so\nauth       required       pam_opendirectory.so\n\n$ cat /etc/pam.d/sudo_local.template\n# sudo_local: local config file which survives system update and is included for sudo\n# uncomment following line to enable Touch ID for sudo\n#auth       sufficient     pam_tid.so",
@@ -381,7 +389,7 @@ func writeReport(results []checks.Result, hostname, serial, osVer, outPath strin
 		Hostname:   hostname,
 		Serial:     serial,
 		OSVersion:  osVer,
-		Timestamp:  time.Now().UTC().Format("2 Jan 2006, 15:04 UTC"),
+		Timestamp:  "6 Jun 2026, 15:18 UTC",
 		Summary:    jsonSummary{Total: total, Pass: pass, Fail: fail, Warn: warn, Score: fmt.Sprintf("%d/%d", pass, total)},
 		Policies:   policies,
 		ScorePct:   fmt.Sprintf("%d", pct),
