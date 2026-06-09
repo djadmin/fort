@@ -29,7 +29,7 @@ func main() {
 	root := &cobra.Command{
 		Use:          "fort",
 		Short:        "Endpoint security checker for macOS",
-		Long:         "fort — audit, fix, and prove endpoint security. One command.",
+		Long:         "fort: audit, fix, and prove endpoint security. One command.",
 		Version:      version,
 		SilenceUsage: true,
 	}
@@ -232,7 +232,7 @@ func run(jsonOutput, fix, dryRun, report, yes bool, only string) (int, error) {
 
 func runDryRun(allChecks []checks.Check) error {
 	sep := strings.Repeat("─", 67)
-	fmt.Printf("\n  %sfort v%s — dry run (nothing will be changed)%s\n", colorDim, version, colorReset)
+	fmt.Printf("\n  %sfort v%s · dry run (nothing will be changed)%s\n", colorDim, version, colorReset)
 	fmt.Printf("  %s%s%s\n\n", colorDim, sep, colorReset)
 
 	fixable := 0
@@ -247,7 +247,7 @@ func runDryRun(allChecks []checks.Check) error {
 	}
 
 	if fixable == 0 {
-		fmt.Printf("  %s✓  Nothing to fix — all checks pass.%s\n\n", colorGreen, colorReset)
+		fmt.Printf("  %s✓  Nothing to fix, all checks pass.%s\n\n", colorGreen, colorReset)
 		return nil
 	}
 

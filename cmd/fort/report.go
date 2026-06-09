@@ -407,7 +407,7 @@ tr.fw-warn .fw-dot{background:var(--warn-bd)}
 
 <!-- ── Framework reference ──────────────────────── -->
 <div class="card fw-ref" style="margin-top:1rem;border-radius:var(--radius)">
-  <div class="section-head">Framework Control Reference &nbsp;—&nbsp; SOC 2 · ISO 27001 · NIST CSF · CIS v8</div>
+  <div class="section-head">Framework Control Reference &nbsp;·&nbsp; SOC 2 · ISO 27001 · NIST CSF · CIS v8</div>
   <table class="fw-table">
     <thead>
       <tr>

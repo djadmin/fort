@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fort — Audit and fix your Mac's security in one command</title>
-<meta name="description" content="fort runs 15 security checks on your Mac and fixes what it safely can. One binary — no agent, no signup, no MDM. Free and open source.">
-<meta property="og:title" content="fort — Audit and fix your Mac's security in one command">
-<meta property="og:description" content="15 security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary — no agent, no signup. Free & open source.">
+<title>fort: Audit and fix your Mac's security in one command</title>
+<meta name="description" content="fort runs 15+ security checks on your Mac and fixes what it safely can. One binary, no agent, no signup, no MDM. Free and open source.">
+<meta property="og:title" content="fort: Audit and fix your Mac's security in one command">
+<meta property="og:description" content="15+ security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary, no agent, no signup. Free & open source.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://djadmin.github.io/fort">
-<meta property="og:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/fort-audit.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/og-fort.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="fort — Audit and fix your Mac's security in one command">
-<meta name="twitter:description" content="15 security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary — no agent, no signup. Free & open source.">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/fort-audit.jpg">
+<meta name="twitter:title" content="fort: Audit and fix your Mac's security in one command">
+<meta name="twitter:description" content="15+ security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary, no agent, no signup. Free & open source.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/og-fort.png">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -463,7 +463,7 @@ footer{
   </div>
   <h1>One command.<br>Every Mac.<br><em>Locked down.</em></h1>
   <p class="hero-sub">
-    fort runs 15 security checks on your Mac and fixes what it safely can — disk encryption, firewall, screen lock, SSH, sharing and more. One binary, no agent, no signup.
+    fort runs 15+ security checks on your Mac and fixes what it safely can: disk encryption, firewall, screen lock, SSH, sharing and more. One binary, no agent, no signup.
   </p>
 
   <div class="terminal-wrap">
@@ -535,7 +535,7 @@ footer{
         <div class="step-num">Step 01</div>
         <div class="step-cmd">$ fort</div>
         <h3>See what's failing</h3>
-        <p>Audits all 15 security controls in under 3 seconds. Score, current state, expected state — no interpretation needed.</p>
+        <p>Audits every security control in under 3 seconds. Score, current state, expected state. No interpretation needed.</p>
       </div>
       <div class="step">
         <div class="step-num">Step 02</div>
@@ -557,7 +557,7 @@ footer{
 <section id="checks">
   <div class="container">
     <div class="section-label">What it checks</div>
-    <div class="section-title">15 controls. Zero guesswork.</div>
+    <div class="section-title">15+ controls. Zero guesswork.</div>
     <p class="section-sub">Every check uses stable, documented macOS APIs. No private frameworks. Works on macOS 12 Monterey through the latest release.</p>
     <div class="checks-grid">
 
@@ -730,7 +730,19 @@ footer{
             OS patch status
             <span class="tag tag-soc">CC6.8</span>
           </div>
-          <div class="check-desc">Checks pending update count from cached Software Update prefs — no network call needed.</div>
+          <div class="check-desc">Checks pending update count from cached Software Update prefs, no network call needed.</div>
+        </div>
+      </div>
+
+      <div class="check-item">
+        <div class="check-icon">👆</div>
+        <div class="check-info">
+          <div class="check-name">
+            Touch ID for sudo
+            <span class="tag tag-soc">CC6.1</span>
+            <span class="tag tag-fix">⚡ auto-fix</span>
+          </div>
+          <div class="check-desc">Detects whether PAM accepts Touch ID for <code>sudo</code>. fort enables it via <code>/etc/pam.d/sudo_local</code>, password still works as fallback.</div>
         </div>
       </div>
 
@@ -751,7 +763,7 @@ footer{
             <div class="report-point-icon rp-green">✓</div>
             <div>
               <h4>Verbatim command output</h4>
-              <p>Every check captures the exact command run and its raw output. Expand any finding to see the full terminal transcript — never a black box.</p>
+              <p>Every check captures the exact command run and its raw output. Expand any finding to see the full terminal transcript. Never a black box.</p>
             </div>
           </div>
           <div class="report-point">
@@ -765,7 +777,7 @@ footer{
             <div class="report-point-icon rp-yellow">🗺️</div>
             <div>
               <h4>Maps to security frameworks</h4>
-              <p>Each check references the relevant controls in SOC 2, ISO 27001, NIST CSF, and CIS — handy context if your team tracks them.</p>
+              <p>Each check references the relevant controls in SOC 2, ISO 27001, NIST CSF, and CIS. Handy context if your team tracks them.</p>
             </div>
           </div>
         </div>
@@ -778,8 +790,8 @@ footer{
               <div class="rm-brand-sub">Endpoint Security Assessment</div>
             </div>
             <div>
-              <div class="rm-score">15/15</div>
-              <div class="rm-score-sub">15 pass · 0 fail · 0 warn</div>
+              <div class="rm-score">16/16</div>
+              <div class="rm-score-sub">16 pass · 0 fail · 0 warn</div>
             </div>
           </div>
           <div class="rm-meta">
@@ -813,7 +825,7 @@ footer{
       <div class="who-card">
         <div class="who-emoji">🧑‍💻</div>
         <h3>Developers & power users</h3>
-        <p>Lock down your own machine in seconds. Read every check before you run it — it's one MIT-licensed Go binary, no magic.</p>
+        <p>Lock down your own machine in seconds. Read every check before you run it. It's one MIT-licensed Go binary, no magic.</p>
       </div>
       <div class="who-card">
         <div class="who-emoji">🔐</div>
@@ -835,12 +847,12 @@ footer{
     <div class="waitlist-inner">
       <div class="section-label">Coming soon</div>
       <div class="section-title">Team dashboard.</div>
-      <p class="section-sub">Fleet view, drift alerts, and policy files — across every Mac in your org. Join the waitlist and we'll reach out first.</p>
+      <p class="section-sub">Fleet view, drift alerts, and policy files, across every Mac in your org. Join the waitlist and we'll reach out first.</p>
       <form class="wl-form" id="wl-form" onsubmit="submitWaitlist(event)">
         <input type="email" class="wl-input" placeholder="you@company.com" required id="wl-email">
         <button type="submit" class="wl-submit">Join waitlist</button>
       </form>
-      <div class="wl-success" id="wl-success">✓ You're on the list — we'll be in touch.</div>
+      <div class="wl-success" id="wl-success">✓ You're on the list. We'll be in touch.</div>
       <p class="wl-note">No spam. Unsubscribe anytime. The CLI is always free.</p>
     </div>
   </div>
@@ -863,7 +875,7 @@ footer{
 const lines = [
   { html: '<span class="c-muted">$ </span><span class="c-white">fort</span>' },
   { html: '' },
-  { html: '<span class="c-dim">  fort v0.1.0  —  alice-mbp (macOS 15.5)</span>' },
+  { html: '<span class="c-dim">  fort v0.3.0  ·  alice-mbp (macOS 15.5)</span>' },
   { html: '<span class="c-dim">  ' + '─'.repeat(49) + '</span>' },
   { html: '' },
   { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Password manager</span> <span class="c-dim">1Password</span>' },
@@ -874,9 +886,10 @@ const lines = [
   { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Gatekeeper</span>       <span class="c-dim">enabled</span>' },
   { html: '  <span class="c-green">✓</span>  <span class="c-white" style="display:inline-block;width:22ch">Remote login (SSH)</span> <span class="c-dim">off</span>' },
   { html: '  <span class="c-red">✗</span>  <span class="c-white" style="display:inline-block;width:22ch">Automatic OS updates</span> <span class="c-dim">off</span>  <span class="c-muted" style="font-size:.9em">expected: on</span>' },
+  { html: '  <span class="c-red">✗</span>  <span class="c-white" style="display:inline-block;width:22ch">Touch ID for sudo</span> <span class="c-dim">off</span>  <span class="c-muted" style="font-size:.9em">expected: enabled</span>' },
   { html: '' },
   { html: '<span class="c-dim">  ' + '─'.repeat(49) + '</span>' },
-  { html: '  <span class="c-bold-red">Score: 12/15</span>  <span class="c-muted">(12 pass, 2 fail, 1 warn)</span>' },
+  { html: '  <span class="c-bold-red">Score: 12/16</span>  <span class="c-muted">(12 pass, 3 fail, 1 warn)</span>' },
   { html: '' },
   { html: '<span class="c-dim">  Run fort --fix to remediate fixable issues.</span>' },
 ];

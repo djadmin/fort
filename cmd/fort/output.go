@@ -49,7 +49,7 @@ func printHuman(results []checks.Result, hostname, osVer string) {
 	total := len(results)
 	sep := strings.Repeat("─", 67)
 
-	fmt.Printf("\n  %sfort v%s%s  —  %s (macOS %s)\n", colorBold, version, colorReset, hostname, osVer)
+	fmt.Printf("\n  %sfort v%s%s  ·  %s (macOS %s)\n", colorBold, version, colorReset, hostname, osVer)
 	fmt.Printf("  %s%s%s\n\n", colorDim, sep, colorReset)
 
 	for _, r := range results {
