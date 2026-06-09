@@ -137,10 +137,11 @@ The generator uses a fixed seed and timestamp, so the output is reproducible. If
 
 Released binaries get their version from the git tag, injected at build time by
 GoReleaser (release) and `make` (local, via `git describe`). So the tag is the source
-of truth. Two fallback constants should still track the latest release for builds that
-skip ldflags:
+of truth. A few spots still hardcode the version and should track the latest release:
 1. `cmd/fort/main.go`: `var version = "x.y.z"` (default when not built via make/release)
 2. `cmd/sample-report/main.go`: `Version: "x.y.z"` in the sample report data
+3. `README.md`: the static release badge `release-vX.Y.Z` (static so it never hits the
+   shields.io GitHub token pool, but that means it is manual)
 
 The landing page demo (`landing/index.html`) shows the version too; keep it current.
 
