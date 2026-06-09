@@ -69,7 +69,7 @@ Exit codes: `0` all pass · `1` any fail · `2` any warn
 - **`--fix` always asks first.** It shows each change and prompts `[y/N]` before applying. Use `--dry-run` to preview without touching anything, or `--yes` to skip the prompt when you mean to (automation, cron, MDM).
 - **One MIT-licensed Go binary.** No agent, no background process, nothing installed system-wide. Read the source.
 
-## What It Checks
+## What it checks
 
 15+ macOS checks across five groups, each mapped to SOC 2, ISO 27001, NIST CSF, and CIS v8:
 
