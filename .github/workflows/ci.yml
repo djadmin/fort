@@ -16,3 +16,10 @@ jobs:
           cache: true
       - run: go vet ./...
       - run: go test ./...
+      # Guarantees the committed sample report matches the current checks and
+      # template. If a check or the template changed without regenerating, this
+      # fails: run `make gen` and commit landing/sample-report.html.
+      - name: Verify sample report is up to date
+        run: |
+          go run ./cmd/sample-report
+          git diff --exit-code landing/sample-report.html

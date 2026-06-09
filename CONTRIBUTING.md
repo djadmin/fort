@@ -1,4 +1,4 @@
-# fort — internal guide for Claude
+# Contributing to fort
 
 ## Project layout
 
@@ -32,21 +32,47 @@ landing/            GitHub Pages site (deployed on push to main)
 - **Evidence is always captured.** Every `Run()` must set `Result.Evidence` using `evidenceCmd()`. This is the raw terminal transcript auditors see. Never leave it empty.
 - **Template duplication is intentional.** `cmd/fort/report.go` and `cmd/sample-report/main.go` both contain `reportTmpl`. Keep them in sync manually — the duplication avoids a shared internal package for what is essentially a one-file template.
 
-## Adding a new check
+## Adding or changing a check
 
-1. Create `internal/checks/yourcheck_darwin.go` — implement the `Check` interface:
-   - `ID()` — short stable slug (e.g. `"screensaver"`)
-   - `Name()` — human display name
-   - `Run() Result` — use `evidenceCmd()` to run the system command and set `Evidence`
+The check count appears in several places. This checklist keeps them in sync, and
+two automated guards (below) fail CI if you miss a step.
+
+1. Create `internal/checks/yourcheck_darwin.go` and implement the `Check` interface:
+   - `ID()`: short stable slug (e.g. `"screensaver"`)
+   - `Name()`: human display name. Match official product spelling (e.g. Apple's "Touch ID", not "TouchID").
+   - `Run() Result`: use `evidenceCmd()` to run the system command and set `Evidence`
    - `Fixable() bool`, `Fix() error`, `FixDescription() string`
 
-2. Register in `internal/checks/registry_darwin.go` — order matters (it's the report order).
+2. Register in `internal/checks/registry_darwin.go` (order matters; it's the report order).
 
 3. Add framework mappings in `internal/checks/frameworks.go`.
 
-4. Add a fake result + evidence string in `cmd/sample-report/main.go` `randomResults()`.
+4. Add a fake result + evidence string in `cmd/sample-report/main.go` `randomResults()`,
+   and add it to the returned slice. Use the same `Name()` as the real check.
 
-5. Run `go test ./...` — the interface contract and report rendering are covered.
+5. Bump the count in `internal/checks/checks_test.go` (`const want = N`). This is the
+   single guard for the registry size; `go test` fails until you update it.
+
+6. Add a `<div class="check-item">` to the "What it checks" grid in `landing/index.html`.
+   (The headline counts say "15+", so no number to change there, just list the check.)
+
+7. Run `make gen` to regenerate `landing/sample-report.html`, then commit it.
+
+8. Run `go test ./...`. The interface contract, report rendering, and count guard are covered.
+
+### Automated guards
+
+- **`TestRegistryCount`** (`internal/checks/checks_test.go`): fails if the number of
+  registered checks doesn't match `const want`. Forces step 5.
+- **`make check-gen`** (also run in CI): regenerates the sample report and fails if the
+  committed `landing/sample-report.html` differs. Forces step 7. The generator is
+  deterministic (fixed seed + timestamp), so a clean regen is always byte-identical.
+
+### Not auto-checked (do by hand)
+
+- `landing/index.html` check grid and terminal demo (step 6): hand-maintained HTML.
+- Marketing assets (hero gif, OG card, screenshots): regenerated from the landing page
+  with the capture tooling, then dropped into `docs/`.
 
 ## Test harness
 
@@ -92,27 +118,33 @@ When changing the HTML/CSS in `cmd/fort/report.go`, apply the same change to `cm
 - Evidence `<details class="ev">` block in the check results table
 - `HasEvidence` field on `policyRow` and population in `writeReport()`
 
-Run `go run ./cmd/sample-report/` after changes to regenerate `landing/sample-report.html`.
+Run `make gen` after changes to regenerate `landing/sample-report.html`.
 
 ## Deploying the sample report
 
 ```bash
-go run ./cmd/sample-report/   # regenerates landing/sample-report.html with fresh random data
+make gen                       # regenerates landing/sample-report.html (deterministic)
 git add landing/sample-report.html
 git commit -m "Refresh sample report"
 git push
 # GitHub Pages deploys automatically (pages.yml workflow, ~30s)
 ```
 
+The generator uses a fixed seed and timestamp, so the output is reproducible. If
+`make gen` produces a diff you didn't expect, the template or a check changed.
+
 ## Version bumping
 
-Version is hardcoded in two places:
-1. `cmd/fort/main.go` — `var version = "x.y.z"`
-2. `cmd/sample-report/main.go` — `Version: "x.y.z"` in `writeReport()`
+Released binaries get their version from the git tag, injected at build time by
+GoReleaser (release) and `make` (local, via `git describe`). So the tag is the source
+of truth. Two fallback constants should still track the latest release for builds that
+skip ldflags:
+1. `cmd/fort/main.go`: `var version = "x.y.z"` (default when not built via make/release)
+2. `cmd/sample-report/main.go`: `Version: "x.y.z"` in the sample report data
 
-The landing page badge (`landing/index.html`) should also match.
+The landing page demo (`landing/index.html`) shows the version too; keep it current.
 
-After bumping, tag and push to trigger goreleaser:
+To cut a release, tag and push, and GoReleaser does the rest:
 ```bash
 git tag v0.x.0 && git push origin v0.x.0
 ```
