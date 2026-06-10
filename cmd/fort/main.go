@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -14,7 +17,7 @@ import (
 	"github.com/djadmin/fort/internal/checks"
 )
 
-var version = "0.3.0"
+var version = "0.3.1"
 
 func main() {
 	var (
@@ -57,6 +60,7 @@ func main() {
 // run returns (exitCode, error).
 // exitCode: 0 = all pass, 1 = any fail, 2 = any warn and no fail.
 func run(jsonOutput, fix, dryRun, report, yes bool, only string) (int, error) {
+	latestVersion := checkLatestVersion()
 	allChecks := checks.All()
 	if len(allChecks) == 0 {
 		return 1, fmt.Errorf("no checks available for this platform")
@@ -219,6 +223,11 @@ func run(jsonOutput, fix, dryRun, report, yes bool, only string) (int, error) {
 		fmt.Printf("  Report written to %s\n\n", outPath)
 	}
 
+	if latest := <-latestVersion; latest != "" && latest != version {
+		fmt.Printf("  %s↑  fort v%s is available (you have v%s) — brew upgrade djadmin/tap/fort%s\n\n",
+			colorDim, latest, version, colorReset)
+	}
+
 	_, fail, warn := tally(results)
 	switch {
 	case fail > 0:
@@ -270,6 +279,62 @@ func osVersion() string {
 		return "unknown"
 	}
 	return strings.TrimSpace(string(out))
+}
+
+const updateCheckInterval = 24 * time.Hour
+
+// checkLatestVersion fetches the latest GitHub release tag at most once per day.
+// Returns empty string on any error, if already checked today, or if FORT_NO_UPDATE_CHECK is set.
+func checkLatestVersion() <-chan string {
+	ch := make(chan string, 1)
+	if os.Getenv("FORT_NO_UPDATE_CHECK") != "" {
+		ch <- ""
+		return ch
+	}
+
+	cacheFile := updateCheckCacheFile()
+	if info, err := os.Stat(cacheFile); err == nil {
+		if time.Since(info.ModTime()) < updateCheckInterval {
+			ch <- ""
+			return ch
+		}
+	}
+
+	go func() {
+		client := &http.Client{Timeout: 3 * time.Second}
+		req, err := http.NewRequest("GET", "https://api.github.com/repos/djadmin/fort/releases/latest", nil)
+		if err != nil {
+			ch <- ""
+			return
+		}
+		req.Header.Set("Accept", "application/vnd.github+json")
+		resp, err := client.Do(req)
+		if err != nil || resp.StatusCode != 200 {
+			ch <- ""
+			return
+		}
+		defer resp.Body.Close()
+		var release struct {
+			TagName string `json:"tag_name"`
+		}
+		if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+			ch <- ""
+			return
+		}
+		// Touch the cache file so we don't check again for 24h.
+		_ = os.MkdirAll(filepath.Dir(cacheFile), 0700)
+		_ = os.WriteFile(cacheFile, nil, 0600)
+		ch <- strings.TrimPrefix(release.TagName, "v")
+	}()
+	return ch
+}
+
+func updateCheckCacheFile() string {
+	dir, err := os.UserCacheDir()
+	if err != nil {
+		dir = os.TempDir()
+	}
+	return filepath.Join(dir, "fort", "update-check")
 }
 
 func serialNumber() string {

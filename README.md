@@ -3,7 +3,8 @@
 **Know your Mac's security posture, fix the gaps, and keep it locked down. One command.**
 
 [![CI](https://github.com/djadmin/fort/actions/workflows/ci.yml/badge.svg)](https://github.com/djadmin/fort/actions)
-[![Release](https://img.shields.io/badge/release-v0.3.0-blue)](https://github.com/djadmin/fort/releases)
+[![Release](https://img.shields.io/github/v/release/djadmin/fort?label=latest)](https://github.com/djadmin/fort/releases)
+[![Downloads](https://img.shields.io/github/downloads/djadmin/fort/total)](https://github.com/djadmin/fort/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
 
