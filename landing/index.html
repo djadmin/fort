@@ -160,7 +160,8 @@ h1 em{
   padding:1.25rem 1.5rem;
   font-family:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
   font-size:12.5px;line-height:1.7;
-  min-height:280px;
+  /* reserve the full final height so the window doesn't grow as lines type in */
+  min-height:452px;
 }
 .tl{opacity:0;transform:translateY(4px);transition:opacity .25s ease,transform .25s ease}
 .tl.show{opacity:1;transform:none}
