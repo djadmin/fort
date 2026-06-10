@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://djadmin.github.io/fort/sitemap.xml

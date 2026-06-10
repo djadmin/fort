@@ -3,17 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fort: Audit and fix your Mac's security in one command</title>
-<meta name="description" content="fort runs 15+ security checks on your Mac and fixes what it safely can. One binary, no agent, no signup, no MDM. Free and open source.">
-<meta property="og:title" content="fort: Audit and fix your Mac's security in one command">
-<meta property="og:description" content="15+ security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary, no agent, no signup. Free & open source.">
+<title>fort — macOS Security Audit & Hardening Tool (Free, Open Source CLI)</title>
+<meta name="description" content="fort is a free, open-source CLI that audits 15+ macOS security settings — FileVault, firewall, screen lock, SSH, Gatekeeper, Touch ID for sudo — explains each in plain English, and fixes what's safe in one command. No agent, no signup, no telemetry.">
+<meta name="keywords" content="macOS security, Mac security audit, harden Mac, FileVault check, macOS hardening tool, Mac security checker, CIS benchmark macOS, SOC 2 macOS, open source security CLI, check Mac security">
+<meta name="author" content="djadmin">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://djadmin.github.io/fort/">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta property="og:site_name" content="fort">
+<meta property="og:title" content="fort — macOS Security Audit & Hardening Tool">
+<meta property="og:description" content="Audit 15+ Mac security settings in plain English and fix what's safe in one command. Free, open source, no telemetry, no signup.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://djadmin.github.io/fort">
-<meta property="og:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/og-fort.png">
+<meta property="og:url" content="https://djadmin.github.io/fort/">
+<meta property="og:image" content="https://djadmin.github.io/fort/og-fort.png">
+<meta property="og:image:alt" content="fort auditing a Mac's security from the terminal, showing a pass/fail score">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="fort: Audit and fix your Mac's security in one command">
-<meta name="twitter:description" content="15+ security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary, no agent, no signup. Free & open source.">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/og-fort.png">
+<meta name="twitter:site" content="@djadmin">
+<meta name="twitter:title" content="fort — macOS Security Audit & Hardening Tool">
+<meta name="twitter:description" content="Audit 15+ Mac security settings in plain English and fix what's safe in one command. Free, open source, no telemetry.">
+<meta name="twitter:image" content="https://djadmin.github.io/fort/og-fort.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "fort",
+      "applicationCategory": "SecurityApplication",
+      "applicationSubCategory": "macOS security audit and hardening CLI",
+      "operatingSystem": "macOS 12 Monterey and later",
+      "description": "fort is a free, open-source command-line tool that runs 15+ security checks on macOS, explains each finding in plain English, and fixes what it safely can. No agent, no signup, no telemetry. Every check shows the exact command it ran. Findings map to SOC 2, ISO 27001, NIST CSF, and CIS v8.",
+      "url": "https://djadmin.github.io/fort/",
+      "downloadUrl": "https://github.com/djadmin/fort/releases",
+      "softwareVersion": "0.3.0",
+      "license": "https://github.com/djadmin/fort/blob/main/LICENSE",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "name": "djadmin", "url": "https://github.com/djadmin" },
+      "softwareHelp": "https://github.com/djadmin/fort/blob/main/README.md",
+      "featureList": [
+        "Audits 15+ macOS security controls in under 3 seconds",
+        "Plain-English explanation for every finding",
+        "One-command auto-fix for safe remediations",
+        "Self-contained HTML evidence report",
+        "Maps each check to SOC 2, ISO 27001, NIST CSF and CIS v8",
+        "No network calls, no account, no telemetry"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I check my Mac's security settings?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Install fort with 'brew install djadmin/tap/fort' and run 'fort'. It audits 15+ security settings — disk encryption, firewall, screen lock, SSH, Gatekeeper, Touch ID for sudo, automatic updates and more — in about 3 seconds and explains each result in plain English." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is fort free and open source?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. fort is free and released under the MIT license. The full source, including every check, is on GitHub at github.com/djadmin/fort." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does fort send my data anywhere?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. The audit makes zero network calls. fort reads local system state and exits. There is no account, no telemetry, and nothing is uploaded. Every check prints the exact command it ran so you can verify it yourself." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can fort help with SOC 2 or ISO 27001 compliance?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every check maps to controls in SOC 2, ISO 27001, NIST CSF and CIS v8, and 'fort --report' writes a self-contained, auditor-ready HTML evidence report with machine identity, per-check results, and the exact commands run." }
+        }
+      ]
+    }
+  ]
+}
+</script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d215a3ee77954f678268313aa0e998f4"}'></script><!-- End Cloudflare Web Analytics -->
 <style>
 :root {
@@ -65,8 +130,16 @@ nav{
 .nav-links a{
   font-size:.875rem;color:var(--muted);
   transition:color .2s;
+  white-space:nowrap;
 }
 .nav-links a:hover{color:var(--white)}
+/* Mobile: drop the in-page section links so the bar can't wrap/overlap;
+   keep the logo + GitHub CTA. */
+@media(max-width:560px){
+  nav{padding:0 1.1rem}
+  .nav-links{gap:1rem}
+  .nav-link{display:none}
+}
 .nav-gh{
   display:flex;align-items:center;gap:.5rem;
   padding:.4rem .875rem;
@@ -427,6 +500,30 @@ section{padding:5rem 1.5rem}
   border-radius:8px;color:var(--green);font-weight:500;
 }
 
+/* ─── FAQ ─────────────────────────────────────── */
+.faq-section{background:var(--surface);border-top:1px solid var(--border)}
+.faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:.75rem}
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:1.1rem 1.375rem;
+}
+.faq-item summary{
+  cursor:pointer;list-style:none;
+  font-size:1rem;font-weight:600;color:var(--white);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{
+  content:'+';color:var(--muted);font-weight:400;font-size:1.25rem;
+  transition:transform .2s;
+}
+.faq-item[open] summary::after{content:'−'}
+.faq-item p{
+  margin-top:.875rem;font-size:.9375rem;color:var(--dimmed);line-height:1.65;
+}
+.faq-item p code{background:#1e2736;padding:.1em .35em;border-radius:3px;font-size:.85em;color:#94a3b8}
+.faq-item a{color:var(--green);text-decoration:underline;text-underline-offset:2px}
+
 /* ─── FOOTER ──────────────────────────────────── */
 footer{
   border-top:1px solid var(--border);
@@ -447,9 +544,9 @@ footer{
 <nav>
   <div class="nav-logo"><span>fort</span></div>
   <div class="nav-links">
-    <a href="#how">How it works</a>
-    <a href="#checks">Checks</a>
-    <a href="#waitlist">Team</a>
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#checks" class="nav-link">Checks</a>
+    <a href="#waitlist" class="nav-link">Team</a>
     <a href="https://github.com/djadmin/fort" class="nav-gh" target="_blank" rel="noopener">
       <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       GitHub
@@ -461,7 +558,7 @@ footer{
 <section class="hero">
   <div class="badge">
     <span class="badge-dot"></span>
-    Open source · macOS · Beta
+    Open source · macOS · MIT licensed
   </div>
   <h1>One command.<br>Every Mac.<br><em>Locked down.</em></h1>
   <p class="hero-sub">
@@ -509,10 +606,12 @@ footer{
     <span class="install-note" id="install-note-go" style="display:none">Requires <a href="https://go.dev" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Go 1.21+</a></span>
   </div>
 
+  <!-- Product Hunt badge — temporarily hidden; re-enable for the PH launch
   <a href="https://www.producthunt.com/products/fort-3?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-fort-3" target="_blank" rel="noopener noreferrer" class="ph-badge-img">
     <img alt="fort - One command to audit and fix your Mac's security | Product Hunt" width="250" height="54" id="ph-badge">
   </a>
   <script>document.getElementById('ph-badge').src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1167705&theme=dark&t='+Date.now();</script>
+  -->
 
   <div class="cta-row">
     <a href="https://github.com/djadmin/fort" target="_blank" rel="noopener" class="btn btn-primary">
@@ -854,6 +953,32 @@ footer{
       </form>
       <div class="wl-success" id="wl-success">✓ You're on the list. We'll be in touch.</div>
       <p class="wl-note">No spam. Unsubscribe anytime. The CLI is always free.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container" style="max-width:760px">
+    <div class="section-label">FAQ</div>
+    <div class="section-title">Common questions</div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>How do I check my Mac's security settings?</summary>
+        <p>Install fort with <code>brew install djadmin/tap/fort</code> and run <code>fort</code>. It audits 15+ security settings — disk encryption, firewall, screen lock, SSH, Gatekeeper, Touch ID for sudo, automatic updates and more — in about 3 seconds and explains each result in plain English.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is fort free and open source?</summary>
+        <p>Yes. fort is free and released under the MIT license. The full source, including every check, is on <a href="https://github.com/djadmin/fort" target="_blank" rel="noopener">GitHub</a>.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does fort send my data anywhere?</summary>
+        <p>No. The audit makes zero network calls. fort reads local system state and exits — no account, no telemetry, nothing uploaded. Every check prints the exact command it ran, so you can verify it instead of trusting it.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can fort help with SOC 2 or ISO 27001 compliance?</summary>
+        <p>Yes. Every check maps to controls in SOC 2, ISO 27001, NIST CSF and CIS v8, and <code>fort --report</code> writes a self-contained, auditor-ready HTML evidence report with machine identity, per-check results, and the exact commands run.</p>
+      </details>
     </div>
   </div>
 </section>
