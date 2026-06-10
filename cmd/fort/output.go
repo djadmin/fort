@@ -70,6 +70,7 @@ func printHuman(results []checks.Result, hostname, osVer string) {
 	if anyFixable(results) {
 		fmt.Printf("\n  %sRun fort --fix to remediate fixable issues.%s\n", colorDim, colorReset)
 	}
+	fmt.Printf("\n  %s★ Find fort useful? Star it: https://github.com/djadmin/fort%s\n", colorDim, colorReset)
 	fmt.Println()
 }
 

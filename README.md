@@ -7,6 +7,7 @@
 [![Downloads](https://img.shields.io/github/downloads/djadmin/fort/total)](https://github.com/djadmin/fort/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
+[![GitHub stars](https://img.shields.io/github/stars/djadmin/fort?style=flat&color=2dd4bf)](https://github.com/djadmin/fort/stargazers)
 
 `fort` runs 15+ security checks on your Mac, fixes what it safely can, and writes an auditor-ready report. No agent, no signup, no MDM enrollment. Just a single binary.
 
@@ -109,6 +110,10 @@ PRs welcome. To add a check:
 2. Register in `internal/checks/registry_darwin.go`
 3. Add framework mappings in `internal/checks/frameworks.go`
 4. Run `go test ./...`; existing tests enforce interface contracts
+
+## Support
+
+If fort saves you time, please **[star it on GitHub](https://github.com/djadmin/fort)**. It is the easiest way to support the project and helps other people find it.
 
 ## License
 
