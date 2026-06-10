@@ -14,13 +14,7 @@
 <meta name="twitter:title" content="fort: Audit and fix your Mac's security in one command">
 <meta name="twitter:description" content="15+ security checks on your Mac, auto-fix for what's safe, a clean score in 3 seconds. One binary, no agent, no signup. Free & open source.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/djadmin/fort/main/docs/og-fort.png">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
-</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d215a3ee77954f678268313aa0e998f4"}'></script><!-- End Cloudflare Web Analytics -->
 <style>
 :root {
   --bg:       #05080f;
@@ -231,17 +225,8 @@ h1 em{
   display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;
 }
 .star-ask .github-button{position:relative;top:1px}
-.ph-badge{
-  display:inline-flex;align-items:center;gap:.6rem;margin-bottom:2.25rem;
-  padding:.45rem .5rem .45rem .55rem;border-radius:10px;
-  background:rgba(255,97,84,.10);border:1px solid rgba(255,97,84,.35);
-  font-size:.9rem;font-weight:600;transition:background .15s,border-color .15s,transform .1s;
-}
-.ph-badge:hover{background:rgba(255,97,84,.17);border-color:rgba(255,97,84,.6);transform:translateY(-1px)}
-.ph-mark{width:24px;height:24px;border-radius:6px;background:#ff6154;color:#fff;font-weight:800;
-  display:flex;align-items:center;justify-content:center;font-size:.95rem}
-.ph-text{color:#ffd9d3}.ph-text b{color:#fff}
-.ph-up{padding:.22rem .55rem;border-radius:6px;background:#ff6154;color:#fff;font-size:.8rem;font-weight:700}
+.ph-badge-img{display:inline-block;margin:1.5rem 0 2.25rem;border-radius:10px;overflow:hidden;transition:transform .1s,opacity .15s}
+.ph-badge-img:hover{transform:translateY(-1px);opacity:.9}
 
 /* ─── SECTION COMMON ──────────────────────────── */
 section{padding:5rem 1.5rem}
@@ -524,13 +509,8 @@ footer{
     <span class="install-note" id="install-note-go" style="display:none">Requires <a href="https://go.dev" style="color:var(--dimmed);text-decoration:underline;text-underline-offset:2px">Go 1.21+</a></span>
   </div>
 
-  <!-- Live-on-PH badge. To use the OFFICIAL ranking badge instead, grab the embed code
-       from your launch post ("..." -> Embed -> Featured) and replace the <a> below;
-       it needs the numeric post_id only that page exposes. -->
-  <a class="ph-badge" href="https://www.producthunt.com/products/fort-3" target="_blank" rel="noopener">
-    <span class="ph-mark">P</span>
-    <span class="ph-text">We're live on <b>Product Hunt</b></span>
-    <span class="ph-up">▲ Upvote</span>
+  <a href="https://www.producthunt.com/products/fort-3?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-fort-3" target="_blank" rel="noopener noreferrer" class="ph-badge-img">
+    <img alt="fort - One command to audit and fix your Mac's security | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1167705&amp;theme=dark&amp;t=1781089617963">
   </a>
 
   <div class="cta-row">
@@ -987,5 +967,7 @@ async function submitWaitlist(e) {
 }
 </script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+<script>
+</script>
 </body>
 </html>
