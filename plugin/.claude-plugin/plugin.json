@@ -1,0 +1,14 @@
+{
+  "name": "fort",
+  "displayName": "Fort",
+  "version": "0.3.0",
+  "description": "Audit your Mac's security posture from Claude Code, understand what each finding means and why it matters, then fix what's safe. Drives the fort CLI over your shell and remediates only what you approve. Read-only by default. Findings map to SOC 2 / ISO 27001 / NIST / CIS when you need audit evidence.",
+  "author": {
+    "name": "Dheeraj Joshi",
+    "url": "https://github.com/djadmin"
+  },
+  "homepage": "https://github.com/djadmin/fort",
+  "repository": "https://github.com/djadmin/fort",
+  "license": "MIT",
+  "keywords": ["security", "macos", "compliance", "soc2", "iso27001", "nist", "cis", "endpoint", "hardening"]
+}

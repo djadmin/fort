@@ -64,6 +64,18 @@ fort --only filevault,firewall  # run only the specified checks (comma-separated
 
 Exit codes: `0` all pass · `1` any fail · `2` any warn
 
+## Use it with Claude Code
+
+fort ships a [Claude Code](https://claude.com/claude-code) plugin so you can audit and harden your Mac from a conversation. Ask "is my Mac secure?" and Claude runs the audit, explains each finding in plain language and why it matters, then fixes only what you approve, previewing the exact command first.
+
+```bash
+brew install djadmin/tap/fort      # the plugin drives this binary
+/plugin marketplace add djadmin/fort
+/plugin install fort@fort
+```
+
+Commands: `/fort-audit` (read-only), `/fort-harden` (fix safe issues with your approval), `/fort-report` (HTML evidence). It runs the `fort` binary over your shell, so there's no extra service to run. See [`plugin/`](plugin/) for details.
+
 ## Safe by design
 
 - **The audit makes no network calls.** `fort` reads local system state and exits. Nothing is uploaded, no account, no telemetry.
