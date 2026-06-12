@@ -6,6 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/djadmin/fort?label=latest)](https://github.com/djadmin/fort/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![macOS 12+](https://img.shields.io/badge/macOS-12%2B-lightgrey)](https://github.com/djadmin/fort)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-8A63D2)](plugin/)
 
 `fort` runs 15+ security checks on your Mac, fixes what it safely can, and writes an auditor-ready report. No agent, no signup, no MDM enrollment. Just a single binary.
 
@@ -64,17 +65,20 @@ fort --only filevault,firewall  # run only the specified checks (comma-separated
 
 Exit codes: `0` all pass · `1` any fail · `2` any warn
 
-## Use it with Claude Code
+## Use it from Claude Code
 
-fort ships a [Claude Code](https://claude.com/claude-code) plugin so you can audit and harden your Mac from a conversation. Ask "is my Mac secure?" and Claude runs the audit, explains each finding in plain language and why it matters, then fixes only what you approve, previewing the exact command first.
+fort ships a [Claude Code](https://claude.com/claude-code) plugin, so you can audit and harden your Mac just by asking. Say "is my Mac secure?" and Claude runs the audit, explains each finding and why it matters, then fixes only what you approve, showing the exact command first.
 
 ```bash
-brew install djadmin/tap/fort      # the plugin drives this binary
+# 1. install the fort binary (the plugin drives it; Claude can also install it for you)
+brew install djadmin/tap/fort
+
+# 2. add the plugin
 /plugin marketplace add djadmin/fort
 /plugin install fort@fort
 ```
 
-Commands: `/fort-audit` (read-only), `/fort-harden` (fix safe issues with your approval), `/fort-report` (HTML evidence). It runs the `fort` binary over your shell, so there's no extra service to run. See [`plugin/`](plugin/) for details.
+Then just ask, or run a command directly: `/fort-audit` (read-only), `/fort-harden` (fix safe issues with your approval), `/fort-report` (HTML evidence). The plugin runs the `fort` binary on your Mac over your shell, no extra service, nothing uploaded. See [`plugin/`](plugin/) for details.
 
 ## Safe by design
 
@@ -82,6 +86,8 @@ Commands: `/fort-audit` (read-only), `/fort-harden` (fix safe issues with your a
 - **No black box.** Every check prints the exact command it ran and its raw output, in the terminal, the JSON, and the HTML report. Verify it instead of trusting it.
 - **`--fix` always asks first.** It shows each change and prompts `[y/N]` before applying. Use `--dry-run` to preview without touching anything, or `--yes` to skip the prompt when you mean to (automation, cron, MDM).
 - **One MIT-licensed Go binary.** No agent, no background process, nothing installed system-wide. Read the source.
+
+Full detail in [PRIVACY.md](PRIVACY.md): zero data collection, no network calls, nothing leaves your machine.
 
 ## What it checks
 

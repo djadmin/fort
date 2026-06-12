@@ -34,12 +34,17 @@ don't change anything.
 
 ## Is fort installed?
 
-Run `fort --version`. If the command isn't found, tell the user to install it and
-stop there — this skill orchestrates the binary, it doesn't replace it:
+Run `fort --version` first. The plugin does not bundle the binary, so it needs `fort`
+present on the machine — but don't dead-end if it's missing. Offer to install it:
 
-```
-brew install djadmin/tap/fort
-```
+- If Homebrew is available (`brew --version` succeeds), offer to install, and on a yes:
+  `brew install djadmin/tap/fort`
+- If Homebrew isn't present, show the alternatives and let the user pick:
+  - Direct download: `curl -fsSL https://github.com/djadmin/fort/releases/latest/download/fort_darwin_all.tar.gz | tar xz && sudo mv fort /usr/local/bin/`
+  - Go: `go install github.com/djadmin/fort/cmd/fort@latest`
+
+Install only with the user's go-ahead, then re-run `fort --version` to confirm before
+auditing. fort is macOS-only; on other platforms, say so rather than trying to install.
 
 ## How to drive it
 
