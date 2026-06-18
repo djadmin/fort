@@ -14,7 +14,7 @@ Good for anyone who wants to harden their Mac. Essential for teams preparing for
 
 **[djadmin.github.io/fort](https://djadmin.github.io/fort)**
 
-<img src="docs/fort-cli.png" width="49%" alt="fort runs a full security audit and shows where you stand"> <img src="docs/fort-fix-cli.png" width="49%" alt="fort --fix reviews each change before applying it">
+<img src="docs/fort-cli.png"  alt="fort runs a full security audit and shows where you stand"> <img src="docs/fort-fix-cli.png" alt="fort --fix reviews each change before applying it">
 
 `fort` audits every control and shows where you stand. `fort --fix` reviews each change, then applies, after you confirm.
 
