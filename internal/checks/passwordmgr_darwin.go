@@ -15,6 +15,7 @@ var knownPasswordManagers = []struct {
 	{"1Password 7 - Password Manager.app", "1Password 7"},
 	{"Bitwarden.app", "Bitwarden"},
 	{"LastPass.app", "LastPass"},
+	{"Dashlane.app", "Dashlane"},
 	{"Dashlane - Password Manager.app", "Dashlane"},
 	{"Keeper Password Manager.app", "Keeper"},
 	{"Enpass.app", "Enpass"},
